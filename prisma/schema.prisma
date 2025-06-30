@@ -17,13 +17,13 @@ model Style {
   id            Int        @id @default(autoincrement())
   thumbnail     String
   nickname      String
+  password      String
   title         String
+  content       String
   image         String[]
   tags          Tag[]      @relation("StyleToTag")
   categories    Category[]
-  content       String
   viewCount     Int        @default(0)
-  curationCount Int        @default(0)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   curation      Curation[]
