@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Style {
+  id            Int        @id @default(autoincrement())
+  thumbnail     String
+  nickname      String
+  title         String
+  image         String[]
+  tags          Tag[]      @relation("StyleToTag")
+  categories    Category[]
+  content       String
+  viewCount     Int        @default(0)
+  curationCount Int        @default(0)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  curation      Curation[]
+}
+
+model Curation {
+  id                 Int      @id @default(autoincrement())
+  nickname           String
+  content            String
+  trendy             Int
+  personality        Int
+  practicality       Int
+  constEffectiveness Int
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  comment            Reply?
+  Style              Style    @relation(fields: [styleId], references: [id], onDelete: Cascade)
+  styleId            Int
+}
+
+model Reply {
+  id         Int      @id @default(autoincrement())
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  curationId Int      @unique
+  curation   Curation @relation(fields: [curationId], references: [id], onDelete: Cascade)
+}
+
+model Tag {
+  id      Int     @id @default(autoincrement())
+  tagname String
+  count   Int     @default(0)
+  styles  Style[] @relation("StyleToTag")
+}
+
+model Category {
+  id      Int      @id @default(autoincrement())
+  type    CATEGORY
+  name    String
+  brand   String
+  price   Int
+  Style   Style    @relation(fields: [styleId], references: [id], onDelete: Cascade)
+  styleId Int
+
+  @@unique([styleId, type]) // type 중복 삽입 방지
+}
+
+enum CATEGORY {
+  TOP
+  BOTTOM
+  OUTER
+  DRESS
+  SHOES
+  BAG
+  ACCESSORY
+}
