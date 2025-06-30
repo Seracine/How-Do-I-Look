@@ -14,19 +14,18 @@ datasource db {
 }
 
 model Style {
-  id            Int        @id @default(autoincrement())
-  thumbnail     String
-  nickname      String
-  password      String
-  title         String
-  content       String
-  image         String[]
-  tags          Tag[]      @relation("StyleToTag")
-  categories    Category[]
-  viewCount     Int        @default(0)
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  curation      Curation[]
+  id         Int        @id @default(autoincrement())
+  nickname   String
+  password   String
+  title      String
+  content    String
+  imageUrls  String[]
+  tags       Tag[]      @relation("StyleToTag")
+  categories Category[]
+  viewCount  Int        @default(0)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  curation   Curation[]
 }
 
 model Curation {
