@@ -11,9 +11,13 @@ const handleValidationErrors = (res, errors) => {
       value: failure.value
     };
   });
-  
+
   return res.status(422).json({
     message: '요청 데이터 유효성 검사에 실패했습니다.',
     errors: extractedErrors,
   });
 };
+
+export const intIdSchhema = refine(number(), 'intId', (value) => {
+  return Number.isInteger(value) && value > 0 || '유효한 ID 형식이 아닙니다.';
+});
