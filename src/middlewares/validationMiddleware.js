@@ -17,7 +17,7 @@ const handleValidationErrors = (res, errors) => {
     errors: extractedErrors,
   });
 };
-
+// 공통 유효성 검사
 export const intIdSchhema = refine(number(), 'intId', (value) => {
   return Number.isInteger(value) && value > 0 || '유효한 ID 형식이 아닙니다.';
 });
@@ -25,4 +25,11 @@ export const intIdSchhema = refine(number(), 'intId', (value) => {
 export const passwordSchema = refine(string(), 'password', (value) => {
   return /^(?=.*[a-zA-Z])(?=.*\d)[A-Za-z\d]{8,16}$/.test(value) ||
     '비밀번호는 영문과 숫자 조합으로 8자에서 16자 사이여야 합니다.';
+});
+
+export const imageUrlsSchema = refine(array(string()), 'imageUrls', (urls) => {
+  const isValid = urls.every(url => 
+    /^.+\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(url)
+  );
+  return isValid || '유효한 이미지 경로 형식이 아닙니다.';
 });
