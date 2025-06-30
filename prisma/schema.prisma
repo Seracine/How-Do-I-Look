@@ -13,6 +13,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum CATEGORY {
+  TOP
+  BOTTOM
+  OUTER
+  DRESS
+  SHOES
+  BAG
+  ACCESSORY
+}
+
 model Style {
   id         Int        @id @default(autoincrement())
   nickname   String
@@ -26,6 +36,25 @@ model Style {
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
   curation   Curation[]
+}
+
+model Category {
+  id      Int      @id @default(autoincrement())
+  type    CATEGORY
+  name    String
+  brand   String
+  price   Int
+  Style   Style    @relation(fields: [styleId], references: [id], onDelete: Cascade)
+  styleId Int
+
+  @@unique([styleId, type]) // type 중복 삽입 방지
+}
+
+model Tag {
+  id      Int     @id @default(autoincrement())
+  tagname String
+  count   Int     @default(0)
+  styles  Style[] @relation("StyleToTag")
 }
 
 model Curation {
@@ -50,33 +79,4 @@ model Reply {
   updatedAt  DateTime @updatedAt
   curationId Int      @unique
   curation   Curation @relation(fields: [curationId], references: [id], onDelete: Cascade)
-}
-
-model Tag {
-  id      Int     @id @default(autoincrement())
-  tagname String
-  count   Int     @default(0)
-  styles  Style[] @relation("StyleToTag")
-}
-
-model Category {
-  id      Int      @id @default(autoincrement())
-  type    CATEGORY
-  name    String
-  brand   String
-  price   Int
-  Style   Style    @relation(fields: [styleId], references: [id], onDelete: Cascade)
-  styleId Int
-
-  @@unique([styleId, type]) // type 중복 삽입 방지
-}
-
-enum CATEGORY {
-  TOP
-  BOTTOM
-  OUTER
-  DRESS
-  SHOES
-  BAG
-  ACCESSORY
 }
