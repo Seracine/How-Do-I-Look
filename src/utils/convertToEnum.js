@@ -30,4 +30,34 @@ const convertCategoryToEnumType = (str) => {
     return convertedStr;
 }
 
-export { convertCategoryToEnumType };
+const convertCategoryToStringType = (arg) => {
+    let convertedEnum
+    switch (arg) {
+        case CATEGORY.TOP:
+            convertedEnum = "top";
+            break;
+        case CATEGORY.BOTTOM:
+            convertedEnum = "bottom";
+            break;
+        case CATEGORY.OUTER:
+            convertedEnum = "outer";
+            break;
+        case CATEGORY.DRESS:
+            convertedEnum = "dress";
+            break;
+        case CATEGORY.SHOES:
+            convertedEnum = "shoes";
+            break;
+        case CATEGORY.BAG:
+            convertedEnum = "bag";
+            break;
+        case CATEGORY.ACCESSORY:
+            convertedEnum = "accessory";
+            break;
+        default:
+            convertedEnum = null;
+    }
+    return convertedEnum;
+}
+
+export { convertCategoryToEnumType, convertCategoryToStringType };
