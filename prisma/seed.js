@@ -1,5 +1,5 @@
-import { PrismaClient, CATEGORY } from '@prisma/client';
 import { convertCategoryToEnumType } from '../src/utils/convertToEnum.js';
+import { prisma } from '../src/utils/prismaInstance.js';
 import {
     mockTags,
     mockStyles,
@@ -7,19 +7,8 @@ import {
     mockCurationRaw,
 } from './mock.js';
 
-const prisma = new PrismaClient();
-
-// string을 CATEGORY enum으로 변환하는 헬퍼 함수
-function getCategoryEnum(typeString) {
-    if (Object.values(CATEGORY).includes(typeString)) {
-        return CATEGORY[typeString];
-    }
-    throw new Error(`Invalid CATEGORY type string: ${typeString}`);
-}
-
 async function main() {
     console.log('--- Seeding mock data ---');
-
     // 1. Tag 데이터 생성
     const tags = await Promise.all(
         mockTags.map(data => prisma.tag.upsert({
@@ -41,7 +30,7 @@ async function main() {
                 content: styleData.content,
                 imageUrls: styleData.imageUrls,
                 viewCount: styleData.viewCount,
-                tags: {
+                tags: { // 현재 생성중인 Style의 tags와 Tag의 tagname을 연결
                     connectOrCreate: (styleData.tags || []).map(tagname => ({
                         where: { tagname: tagname },
                         create: { tagname: tagname },
@@ -50,10 +39,19 @@ async function main() {
             },
         });
         createdStyles.push(style);
+        // 각 Style의 tags에 대해 count 증가
+        for(const tagname of styleData.tags || []) {
+            await prisma.tag.update({
+                where: { tagname: tagname },
+                data: { count: { increment: 1 } },
+            });
+        }
     }
     console.log(`Created ${createdStyles.length} styles.`);
 
     // 3. Category 데이터 생성
+    // Category 각 객체의 type 속성을 enum으로 변환
+    // mockCategoriesRaw는 { styleId, type, name, brand, price } 형태
     const categoriesToCreate = mockCategoriesRaw.map(cat => ({
         ...cat,
         type: convertCategoryToEnumType(cat.type),
@@ -75,8 +73,8 @@ async function main() {
                 personality: curationRaw.personality,
                 practicality: curationRaw.practicality,
                 costEffectiveness: curationRaw.costEffectiveness,
-                ...(curationRaw.replyContent && {
-                    comment: {
+                ...(curationRaw.replyContent && { // ...을 사용해야 comment 속성이 객체에 병합됨
+                    comment: { // replyContent가 있을 때만 reply 생성
                         create: { content: curationRaw.replyContent },
                     },
                 }),
