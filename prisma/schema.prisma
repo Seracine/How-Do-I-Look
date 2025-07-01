@@ -52,24 +52,25 @@ model Category {
 
 model Tag {
   id      Int     @id @default(autoincrement())
-  tagname String
+  tagname String  @unique
   count   Int     @default(0)
   styles  Style[] @relation("StyleToTag")
 }
 
 model Curation {
-  id                 Int      @id @default(autoincrement())
-  nickname           String
-  content            String
-  trendy             Int
-  personality        Int
-  practicality       Int
-  constEffectiveness Int
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  comment            Reply?
-  Style              Style    @relation(fields: [styleId], references: [id], onDelete: Cascade)
-  styleId            Int
+  id                Int      @id @default(autoincrement())
+  nickname          String
+  password          String
+  content           String
+  trendy            Int
+  personality       Int
+  practicality      Int
+  costEffectiveness Int
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  comment           Reply?
+  Style             Style    @relation(fields: [styleId], references: [id], onDelete: Cascade)
+  styleId           Int
 }
 
 model Reply {
