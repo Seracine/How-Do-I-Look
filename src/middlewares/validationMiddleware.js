@@ -212,16 +212,6 @@ export const stylesQuerySchema = object({
   tag: optional(string()),
 });
 
-export const curationsQuerySchema = object({
-  page: optional(number()),
-  pageSize: optional(number()),
-  searchBy: optional(union([
-    literal(searchByCuratingEnum.nickname),
-    literal(searchByCuratingEnum.content),
-  ])),
-  keyword: optional(string()),
-});
-
 export const rankingsQuerySchema = object({
   rankBy: union([
     literal(rankByEnum.total),
@@ -233,6 +223,17 @@ export const rankingsQuerySchema = object({
   page: optional(number()),
   pageSize: optional(number()),
 });
+
+export const curationsQuerySchema = object({
+  page: optional(number()),
+  pageSize: optional(number()),
+  searchBy: optional(union([
+    literal(searchByCuratingEnum.nickname),
+    literal(searchByCuratingEnum.content),
+  ])),
+  keyword: optional(string()),
+});
+
 //Path Parameter 유효성 검사
 export const pathIdSchema = object({
   id: intIdSchema,
