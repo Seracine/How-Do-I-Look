@@ -13,7 +13,7 @@
 // 유효성 검사 미들웨어 에러핸들러는 준철님이 만드신다고 하심
 
 import logger from '../utils/logger.js'; // 에러 로깅 유틸리티 (이전 예시에서 만듦)
-import apiError from './apiError.js';
+import CustomErrors from './index.js';
 
 const errorHandlers = ( err, req, res, next ) => {
  // 1. 에러 로깅 (가장 중요!)
@@ -45,19 +45,7 @@ const errorHandlers = ( err, req, res, next ) => {
             errorDetails = err.details; // ValidationError의 details 속성 포함
         }
     } 
-    
-    else if (err.code === '등록 오류(에러 코드 수정바람)') {
-        statusCode = 400;
-        message = `잘못된 요청입니다.`;
-    }
-    
-    else if (err.code === `목록 조회 오류(에러 코드 수정바람`) {
-        statusCode = 400;
-        message = `잘못된 요청입니다.`;
-    }
 
-    
-    
      else if (err.code === 'LIMIT_FILE_SIZE') {
         throw new imageUpError(`파일 사이즈가 너무 큽니다. 5MB 이하의 파일을 업로드해주세요.`, 
             [`파일명: ${req.file.originalname}`]);
@@ -66,8 +54,7 @@ const errorHandlers = ( err, req, res, next ) => {
         statusCode = 400;
         message = '잘못된 파일이 업로드되었습니다.';
     }
-
-
+    
     // 그 외 예상치 못한 프로그래밍 에러 (예: ReferenceError, TypeError 등)
     // 운영 환경에서는 사용자에게 상세한 에러 메시지를 노출하지 않도록 합니다.
     else {

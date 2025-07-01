@@ -1,4 +1,4 @@
-class apiError extends Error {
+export default class apiError extends Error {
   constructor(message, statusCode = 500, errorCode = 'SERVER_ERROR') {
       super(message); // 부모 Error 클래스의 생성자 호출
 
@@ -12,8 +12,6 @@ class apiError extends Error {
       Error.captureStackTrace(this, this.constructor);
     }
 }
-
-export default apiError;
 
 /*
 ApiError는 에러 메시지, HTTP 상태 코드, 내부 에러 코드를 
