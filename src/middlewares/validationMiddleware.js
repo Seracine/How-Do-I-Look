@@ -238,3 +238,39 @@ export const curationsQuerySchema = object({
 export const pathIdSchema = object({
   id: intIdSchema,
 });
+//유효성 검사 미들웨어
+export const validateBody = (schema) => (req, res, next) => {
+  try {
+    schema.create(req.body);
+    next();
+  } catch (error) {
+    if (error instanceof Error && 'failures' in error) {
+      return handleValidationErrors(res, error);
+    }
+    next(error);
+  }
+};
+
+export const validateQuery = (schema) => (req, res, next) => {
+  try {
+    schema.create(req.query);
+    next();
+  } catch (error) {
+    if (error instanceof Error && 'failures' in error) {
+      return handleValidationErrors(res, error);
+    }
+    next(error);
+  }
+};
+
+export const validateParams = (schema) => (req, res, next) => {
+  try {
+    schema.create(req.params);
+    next();
+  } catch (error) {
+    if (error instanceof Error && 'failures' in error) {
+      return handleValidationErrors(res, error);
+    }
+    next(error);
+  }
+};
