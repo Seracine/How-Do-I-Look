@@ -116,6 +116,42 @@ export const styleFormInputSchema = refine(
   }
 );
 
+export const styleUpdateFormInputSchema = refine(
+  object({
+    imageUrls: imageUrlsSchema,
+    tags: optional(array(string())),
+    title: optional(string()),
+    nickname: optional(string()),
+    content: optional(string()),
+    categories: object({
+      [categoryKeyEnum.top]: optional(categoryValueSchema),
+      [categoryKeyEnum.bottom]: optional(categoryValueSchema),
+      [categoryKeyEnum.outer]: optional(categoryValueSchema),
+      [categoryKeyEnum.dress]: optional(categoryValueSchema),
+      [categoryKeyEnum.shoes]: optional(categoryValueSchema),
+      [categoryKeyEnum.bag]: optional(categoryValueSchema),
+      [categoryKeyEnum.accessory]: optional(categoryValueSchema),
+    }),
+    password: passwordSchema,
+  }),
+  'StyleFormInputWithCategoryCheck',
+  (value) => {
+    if (value.categories !== undefined) {
+      const categoryValues = Object.values(value.categories);
+      const hasAtLeastOneCategory = categoryValues.some(catValue => {
+        try {
+          categoryValueSchema.create(catValue);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      });
+      return hasAtLeastOneCategory || '카테고리를 제공할 경우 최소 하나 이상 선택해야 합니다.';
+    }
+    return true;
+  }
+);
+
 export const styleDeleteFormInputSchema = object({
   password: passwordSchema,
 });
@@ -124,12 +160,36 @@ export const curatingFormInputSchema = object({
   nickname: string(),
   content: string(),
   password: passwordSchema,
-  trendy: number(),
-  personality: number(),
-  practicality: number(),
-  costEffectiveness: number()
+  trendy: refine(number(), 'trendyScore', (value) => value >= 0 && Number.isInteger(value) || 'Trendy 점수는 0 이상의 정수여야 합니다.'),
+  personality: refine(number(), 'personalityScore', (value) => value >= 0 && Number.isInteger(value) || 'Personality 점수는 0 이상의 정수여야 합니다.'),
+  practicality: refine(number(), 'practicalityScore', (value) => value >= 0 && Number.isInteger(value) || 'Practicality 점수는 0 이상의 정수여야 합니다.'),
+  costEffectiveness: refine(number(), 'costEffectivenessScore', (value) => value >= 0 && Number.isInteger(value) || 'CostEffectiveness 점수는 0 이상의 정수여야 합니다.')
+});
+
+export const curatingUpdateFormInputSchema = object({
+  nickname: optional(string()),
+  content: optional(string()),
+  password: passwordSchema,
+  trendy: optional(refine(number(), 'trendyScore', (value) => value >= 0 && Number.isInteger(value) || 'Trendy 점수는 0 이상의 정수여야 합니다.')),
+  personality: optional(refine(number(), 'personalityScore', (value) => value >= 0 && Number.isInteger(value) || 'Personality 점수는 0 이상의 정수여야 합니다.')),
+  practicality: optional(refine(number(), 'practicalityScore', (value) => value >= 0 && Number.isInteger(value) || 'Practicality 점수는 0 이상의 정수여야 합니다.')),
+  costEffectiveness: optional(refine(number(), 'costEffectivenessScore', (value) => value >= 0 && Number.isInteger(value) || 'CostEffectiveness 점수는 0 이상의 정수여야 합니다.')),
 });
 
 export const curatingDeleteFormInputSchema = object({
   password: passwordSchema,
+});
+// reply 유효성 검사
+export const replyFormInputSchema = object({
+  content: string(),
+  password: passwordSchema,
+});
+
+export const replyUpdateFormInputSchema = object({
+  content: optional(string()),
+  password: passwordSchema,
+});
+
+export const replyDeleteFormInputSchema = object({
+  password:passwordSchema,
 });
