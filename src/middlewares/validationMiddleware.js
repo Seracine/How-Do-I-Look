@@ -1,6 +1,6 @@
 import { array, boolean, defaulted, literal, number, object, optional, refine, string, union } from 'superstruct';
 
-const handleValidationErrors = (res, errors) => {
+export const handleValidationErrors = (res, errors) => {
 
   const extractedErrors = errors.failures().map(failure => {
     return {
@@ -34,25 +34,25 @@ export const imageUrlsSchema = refine(array(string()), 'imageUrls', (urls) => {
   return isValid || '유효한 이미지 경로 형식이 아닙니다.';
 });
 //enum 타입 정의
-const sortByEnum = {
+export const sortByEnum = {
   latest: 'latest',
   mostViewed: 'mostViewed',
   mostCurated: 'mostCurated',
 };
 
-const searchByStyleEnum = {
+export const searchByStyleEnum = {
   nickname: 'nickname',
   title: 'title',
   content: 'content',
   tag: 'tag'
 };
 
-const searchByCuratingEnum = {
+export const searchByCuratingEnum = {
   nickname: 'nickname',
   content: 'content',
 };
 
-const rankByEnum = {
+export const rankByEnum = {
   total: 'total',
   trendy: 'trendy',
   personality: 'personality',
@@ -60,7 +60,7 @@ const rankByEnum = {
   costEffectiveness: 'costEffectiveness',
 };
 
-const categoryKeyEnum = {
+export const categoryKeyEnum = {
   top: 'top',
   bottom: 'bottom',
   outer: 'outer',
@@ -70,7 +70,7 @@ const categoryKeyEnum = {
   accessory: 'accessory',
 };
 
-const categoryValueFieldEnum = {
+export const categoryValueFieldEnum = {
   name: 'name',
   brand: 'brand',
   price: 'price',
