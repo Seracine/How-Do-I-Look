@@ -18,7 +18,7 @@ const handleValidationErrors = (res, errors) => {
   });
 };
 // 공통 유효성 검사
-export const intIdSchhema = refine(number(), 'intId', (value) => {
+export const intIdSchema = refine(number(), 'intId', (value) => {
   return Number.isInteger(value) && value > 0 || '유효한 ID 형식이 아닙니다.';
 });
 
@@ -28,8 +28,108 @@ export const passwordSchema = refine(string(), 'password', (value) => {
 });
 
 export const imageUrlsSchema = refine(array(string()), 'imageUrls', (urls) => {
-  const isValid = urls.every(url => 
+  const isValid = urls.every(url =>
     /^.+\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(url)
   );
   return isValid || '유효한 이미지 경로 형식이 아닙니다.';
+});
+//enum 타입 정의
+const sortByEnum = {
+  latest: 'latest',
+  mostViewed: 'mostViewed',
+  mostCurated: 'mostCurated',
+};
+
+const searchByStyleEnum = {
+  nickname: 'nickname',
+  title: 'title',
+  content: 'content',
+  tag: 'tag'
+};
+
+const searchByCuratingEnum = {
+  nickname: 'nickname',
+  content: 'content',
+};
+
+const rankByEnum = {
+  total: 'total',
+  trendy: 'trendy',
+  personality: 'personality',
+  practicality: 'practicality',
+  costEffectiveness: 'costEffectiveness',
+};
+
+const categoryKeyEnum = {
+  top: 'top',
+  bottom: 'bottom',
+  outer: 'outer',
+  dress: 'dress',
+  shoes: 'shoes',
+  bag: 'bag',
+  accessory: 'accessory',
+};
+
+const categoryValueFieldEnum = {
+  name: 'name',
+  brand: 'brand',
+  price: 'price',
+};
+
+export const categoryValueSchema = object({
+  [categoryValueFieldEnum.name]: string(),
+  [categoryValueFieldEnum.brand]: string(),
+  [categoryValueFieldEnum.price]: number(),
+});
+// 스타일유효성검사
+export const styleFormInputSchema = refine(
+  object({
+    imageUrls: imageUrlsSchema,
+    tags: array(string()),
+    title: string(),
+    nickname: string(),
+    content: string(),
+    categories: object({
+      [categoryKeyEnum.top]: optional(categoryValueSchema),
+      [categoryKeyEnum.bottom]: optional(categoryValueSchema),
+      [categoryKeyEnum.outer]: optional(categoryValueSchema),
+      [categoryKeyEnum.dress]: optional(categoryValueSchema),
+      [categoryKeyEnum.shoes]: optional(categoryValueSchema),
+      [categoryKeyEnum.bag]: optional(categoryValueSchema),
+      [categoryKeyEnum.accessory]: optional(categoryValueSchema),
+    }),
+    password: passwordSchema,
+  }),
+  'StyleFormInputWithCategoryCheck',
+  (value) => {
+    const categoryValues = Object.values(value.categories);
+    const hasAtLeastOneCategory = categoryValues.some(catValue => {
+      try {
+        categoryValueSchema.create(catValue);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    });
+
+    return hasAtLeastOneCategory || '카테고리는 최소 하나 이상 선택해야 합니다.';
+  }
+);
+
+export const styleDeleteFormInputSchema = object({
+  password: passwordSchema,
+});
+// 큐레이션 유효성 검사
+export const curatingFormInputSchema = object({
+  nickname: string(),
+  content: string(),
+  password: passwordSchema,
+  trendy: number(),
+  personality: number(),
+  practicality: number(),
+  costEffectiveness: number()
+});
+
+export const curatingDeleteFormInputSchema = object({
+  password: passwordSchema,
 });
