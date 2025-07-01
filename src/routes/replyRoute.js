@@ -1,7 +1,7 @@
 import express from 'express';
-import { validationReply } from './middlewares/validation';
-import { hashPassword } from './middlewares/hashpassword';
-import { addReply } from './controllers';
+import { validationReply } from '../middlewares/replyValidation';
+import { hashPassword } from '../middlewares/replyHashpassword';
+import { addReply } from '../controllers/replyControllers';
 
 const createReplyRules = express.Router();
 const updateReplyRules = express.Router();
