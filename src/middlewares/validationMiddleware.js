@@ -118,12 +118,12 @@ export const styleFormInputSchema = refine(
 
 export const styleUpdateFormInputSchema = refine(
   object({
-    imageUrls: imageUrlsSchema,
+    imageUrls: optional(imageUrlsSchema),
     tags: optional(array(string())),
     title: optional(string()),
     nickname: optional(string()),
     content: optional(string()),
-    categories: object({
+    categories: optional(object({
       [categoryKeyEnum.top]: optional(categoryValueSchema),
       [categoryKeyEnum.bottom]: optional(categoryValueSchema),
       [categoryKeyEnum.outer]: optional(categoryValueSchema),
@@ -131,10 +131,10 @@ export const styleUpdateFormInputSchema = refine(
       [categoryKeyEnum.shoes]: optional(categoryValueSchema),
       [categoryKeyEnum.bag]: optional(categoryValueSchema),
       [categoryKeyEnum.accessory]: optional(categoryValueSchema),
-    }),
+    })),
     password: passwordSchema,
   }),
-  'StyleFormInputWithCategoryCheck',
+  'StyleUpdateFormInputWithCategoryCheck',
   (value) => {
     if (value.categories !== undefined) {
       const categoryValues = Object.values(value.categories);
@@ -192,4 +192,48 @@ export const replyUpdateFormInputSchema = object({
 
 export const replyDeleteFormInputSchema = object({
   password:passwordSchema,
+});
+//쿼리 스키마 유효성 검사
+export const stylesQuerySchema = object({
+  page: optional(number()),
+  pageSize: optional(number()),
+  sortBy: optional(union([
+    literal(sortByEnum.latest),
+    literal(sortByEnum.mostViewed),
+    literal(sortByEnum.mostCurated),
+  ])),
+  searchBy: optional(union([
+    literal(searchByStyleEnum.nickname),
+    literal(searchByStyleEnum.title),
+    literal(searchByStyleEnum.content),
+    literal(searchByStyleEnum.tag),
+  ])),
+  keyword: optional(string()),
+  tag: optional(string()),
+});
+
+export const curationsQuerySchema = object({
+  page: optional(number()),
+  pageSize: optional(number()),
+  searchBy: optional(union([
+    literal(searchByCuratingEnum.nickname),
+    literal(searchByCuratingEnum.content),
+  ])),
+  keyword: optional(string()),
+});
+
+export const rankingsQuerySchema = object({
+  rankBy: union([
+    literal(rankByEnum.total),
+    literal(rankByEnum.trendy),
+    literal(rankByEnum.personality),
+    literal(rankByEnum.practicality),
+    literal(rankByEnum.costEffectiveness),
+  ]),
+  page: optional(number()),
+  pageSize: optional(number()),
+});
+//Path Parameter 유효성 검사
+export const pathIdSchema = object({
+  id: intIdSchema,
 });
