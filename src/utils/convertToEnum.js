@@ -30,4 +30,4 @@ const convertCategoryToEnumType = (str) => {
     return convertedStr;
 }
 
-export default convertCategoryToEnumType;
+export { convertCategoryToEnumType };
