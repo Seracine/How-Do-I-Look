@@ -1,6 +1,4 @@
-import * as Superstruct from 'superstruct';
-
-const { array, literal, number, object, optional, refine, string, union } = Superstruct;
+import { array, literal, number, object, optional, refine, string, union, size, } from 'superstruct';
 
 export const handleValidationErrors = (res, errors) => {
 
@@ -35,14 +33,14 @@ export const imageUrlsSchema = refine(array(string()), 'imageUrls', (urls) => {
   );
   return isValid || '유효한 이미지 경로 형식이 아닙니다.';
 });
-// 각데이터의 제한 적용
-export const nicknameSchema = string().min(1).max(20);
 
-export const titleSchema = string().min(1).max(30);
+export const nicknameSchema = size(string(), 1, 20);
 
-export const contentSchema = string().min(1).max(500);
+export const titleSchema = size(string(), 1, 30);
 
-export const tagSchema = string().min(1).max(20);
+export const contentSchema = size(string(), 1, 500);
+
+export const tagSchema = size(string(), 1, 20);
 
 export const tagsArraySchema = refine(array(tagSchema), 'tagsArrayLimit', (value) => {
     return value.length <= 3 || '태그는 최대 3개까지 입력할 수 있습니다.';
@@ -95,8 +93,8 @@ export const categoryValueFieldEnum = {
 };
 
 export const categoryValueSchema = object({
-  [categoryValueFieldEnum.name]: string().min(1).max(20),
-  [categoryValueFieldEnum.brand]: string().min(1).max(20),
+  [categoryValueFieldEnum.name]: size(string(), 1, 20),
+  [categoryValueFieldEnum.brand]: size(string(), 1, 20),
   [categoryValueFieldEnum.price]: refine(number(), 'itemPriceRange', (value) => {
     return value >= 0 && value <= 100000000 && Number.isInteger(value) || '가격은 0 이상 100,000,000 이하의 정수여야 합니다.';
   }),
@@ -215,8 +213,8 @@ export const replyDeleteFormInputSchema = object({
 });
 //쿼리 스키마 유효성 검사
 export const stylesQuerySchema = object({
-  page: optional(number().min(1)),
-  pageSize: optional(number().min(1).max(100)),
+  page: optional(size(number(), 1)),
+  pageSize: optional(size(number(), 1, 100)),
   sortBy: optional(union([
     literal(sortByEnum.latest),
     literal(sortByEnum.mostViewed),
@@ -228,7 +226,7 @@ export const stylesQuerySchema = object({
     literal(searchByStyleEnum.content),
     literal(searchByStyleEnum.tag),
   ])),
-  keyword: optional(string().min(1).max(100)),
+  keyword: optional(size(string(), 1, 100)),
   tag: optional(tagSchema),
 });
 
@@ -240,18 +238,18 @@ export const rankingsQuerySchema = object({
     literal(rankByEnum.practicality),
     literal(rankByEnum.costEffectiveness),
   ]),
-  page: optional(number().min(1)),
-  pageSize: optional(number().min(1).max(100)),
+  page: optional(size(number(), 1)),
+  pageSize: optional(size(number(), 1, 100)),
 });
 
 export const curationsQuerySchema = object({
-  page: optional(number().min(1)),
-  pageSize: optional(number().min(1).max(100)),
+  page: optional(size(number(), 1)),
+  pageSize: optional(size(number(), 1, 100)),
   searchBy: optional(union([
     literal(searchByCuratingEnum.nickname),
     literal(searchByCuratingEnum.content),
   ])),
-  keyword: optional(string().min(1).max(100)),
+  keyword: optional(size(string(), 1, 100)),
 });
 
 //Path Parameter 유효성 검사
