@@ -1,4 +1,6 @@
-import { array, literal, number, object, optional, refine, string, union } from 'superstruct';
+import * as Superstruct from 'superstruct';
+
+const { array, literal, number, object, optional, refine, string, union } = Superstruct;
 
 export const handleValidationErrors = (res, errors) => {
 
