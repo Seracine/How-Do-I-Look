@@ -1,4 +1,4 @@
-import { array, boolean, defaulted, literal, number, object, optional, refine, string, union } from 'superstruct';
+import { array, literal, number, object, optional, refine, string, union } from 'superstruct';
 
 export const handleValidationErrors = (res, errors) => {
 
@@ -32,6 +32,22 @@ export const imageUrlsSchema = refine(array(string()), 'imageUrls', (urls) => {
     /^.+\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(url)
   );
   return isValid || '유효한 이미지 경로 형식이 아닙니다.';
+});
+// 각데이터의 제한 적용
+export const nicknameSchema = string().min(1).max(20);
+
+export const titleSchema = string().min(1).max(30);
+
+export const contentSchema = string().min(1).max(500);
+
+export const tagSchema = string().min(1).max(20);
+
+export const tagsArraySchema = refine(array(tagSchema), 'tagsArrayLimit', (value) => {
+    return value.length <= 3 || '태그는 최대 3개까지 입력할 수 있습니다.';
+});
+
+export const scoreSchema = refine(number(), 'scoreRange', (value) => {
+    return Number.isInteger(value) && value >= 0 && value <= 10 || '점수는 0 이상 10 이하의 정수여야 합니다.';
 });
 //enum 타입 정의
 export const sortByEnum = {
@@ -77,18 +93,20 @@ export const categoryValueFieldEnum = {
 };
 
 export const categoryValueSchema = object({
-  [categoryValueFieldEnum.name]: string(),
-  [categoryValueFieldEnum.brand]: string(),
-  [categoryValueFieldEnum.price]: number(),
+  [categoryValueFieldEnum.name]: string().min(1).max(20),
+  [categoryValueFieldEnum.brand]: string().min(1).max(20),
+  [categoryValueFieldEnum.price]: refine(number(), 'itemPriceRange', (value) => {
+    return value >= 0 && value <= 100000000 && Number.isInteger(value) || '가격은 0 이상 100,000,000 이하의 정수여야 합니다.';
+  }),
 });
 // 스타일유효성검사
 export const styleFormInputSchema = refine(
   object({
     imageUrls: imageUrlsSchema,
-    tags: array(string()),
-    title: string(),
-    nickname: string(),
-    content: string(),
+    tags: tagsArraySchema,
+    title: titleSchema,
+    nickname: nicknameSchema,
+    content: contentSchema,
     categories: object({
       [categoryKeyEnum.top]: optional(categoryValueSchema),
       [categoryKeyEnum.bottom]: optional(categoryValueSchema),
@@ -119,10 +137,10 @@ export const styleFormInputSchema = refine(
 export const styleUpdateFormInputSchema = refine(
   object({
     imageUrls: optional(imageUrlsSchema),
-    tags: optional(array(string())),
-    title: optional(string()),
-    nickname: optional(string()),
-    content: optional(string()),
+    tags: optional(tagsArraySchema),
+    title: optional(titleSchema),
+    nickname: optional(nicknameSchema),
+    content: optional(contentSchema),
     categories: optional(object({
       [categoryKeyEnum.top]: optional(categoryValueSchema),
       [categoryKeyEnum.bottom]: optional(categoryValueSchema),
@@ -146,7 +164,7 @@ export const styleUpdateFormInputSchema = refine(
           return false;
         }
       });
-      return hasAtLeastOneCategory || '카테고리를 제공할 경우 최소 하나 이상 선택해야 합니다.';
+      return hasAtLeastOneCategory || '카테고리는 최소 하나 이상 선택해야 합니다.';
     }
     return true;
   }
@@ -157,23 +175,23 @@ export const styleDeleteFormInputSchema = object({
 });
 // 큐레이션 유효성 검사
 export const curatingFormInputSchema = object({
-  nickname: string(),
-  content: string(),
+  nickname: nicknameSchema,
+  content: contentSchema,
   password: passwordSchema,
-  trendy: refine(number(), 'trendyScore', (value) => value >= 0 && Number.isInteger(value) || 'Trendy 점수는 0 이상의 정수여야 합니다.'),
-  personality: refine(number(), 'personalityScore', (value) => value >= 0 && Number.isInteger(value) || 'Personality 점수는 0 이상의 정수여야 합니다.'),
-  practicality: refine(number(), 'practicalityScore', (value) => value >= 0 && Number.isInteger(value) || 'Practicality 점수는 0 이상의 정수여야 합니다.'),
-  costEffectiveness: refine(number(), 'costEffectivenessScore', (value) => value >= 0 && Number.isInteger(value) || 'CostEffectiveness 점수는 0 이상의 정수여야 합니다.')
+  trendy: scoreSchema,
+  personality: scoreSchema,
+  practicality: scoreSchema,
+  costEffectiveness: scoreSchema
 });
 
 export const curatingUpdateFormInputSchema = object({
-  nickname: optional(string()),
-  content: optional(string()),
+  nickname: optional(nicknameSchema),
+  content: optional(contentSchema),
   password: passwordSchema,
-  trendy: optional(refine(number(), 'trendyScore', (value) => value >= 0 && Number.isInteger(value) || 'Trendy 점수는 0 이상의 정수여야 합니다.')),
-  personality: optional(refine(number(), 'personalityScore', (value) => value >= 0 && Number.isInteger(value) || 'Personality 점수는 0 이상의 정수여야 합니다.')),
-  practicality: optional(refine(number(), 'practicalityScore', (value) => value >= 0 && Number.isInteger(value) || 'Practicality 점수는 0 이상의 정수여야 합니다.')),
-  costEffectiveness: optional(refine(number(), 'costEffectivenessScore', (value) => value >= 0 && Number.isInteger(value) || 'CostEffectiveness 점수는 0 이상의 정수여야 합니다.')),
+  trendy: optional(scoreSchema),
+  personality: optional(scoreSchema),
+  practicality: optional(scoreSchema),
+  costEffectiveness: optional(scoreSchema),
 });
 
 export const curatingDeleteFormInputSchema = object({
@@ -181,12 +199,12 @@ export const curatingDeleteFormInputSchema = object({
 });
 // reply 유효성 검사
 export const replyFormInputSchema = object({
-  content: string(),
+  content: contentSchema,
   password: passwordSchema,
 });
 
 export const replyUpdateFormInputSchema = object({
-  content: optional(string()),
+  content: optional(contentSchema),
   password: passwordSchema,
 });
 
@@ -195,8 +213,8 @@ export const replyDeleteFormInputSchema = object({
 });
 //쿼리 스키마 유효성 검사
 export const stylesQuerySchema = object({
-  page: optional(number()),
-  pageSize: optional(number()),
+  page: optional(number().min(1)),
+  pageSize: optional(number().min(1).max(100)),
   sortBy: optional(union([
     literal(sortByEnum.latest),
     literal(sortByEnum.mostViewed),
@@ -208,8 +226,8 @@ export const stylesQuerySchema = object({
     literal(searchByStyleEnum.content),
     literal(searchByStyleEnum.tag),
   ])),
-  keyword: optional(string()),
-  tag: optional(string()),
+  keyword: optional(string().min(1).max(100)),
+  tag: optional(tagSchema),
 });
 
 export const rankingsQuerySchema = object({
@@ -220,18 +238,18 @@ export const rankingsQuerySchema = object({
     literal(rankByEnum.practicality),
     literal(rankByEnum.costEffectiveness),
   ]),
-  page: optional(number()),
-  pageSize: optional(number()),
+  page: optional(number().min(1)),
+  pageSize: optional(number().min(1).max(100)),
 });
 
 export const curationsQuerySchema = object({
-  page: optional(number()),
-  pageSize: optional(number()),
+  page: optional(number().min(1)),
+  pageSize: optional(number().min(1).max(100)),
   searchBy: optional(union([
     literal(searchByCuratingEnum.nickname),
     literal(searchByCuratingEnum.content),
   ])),
-  keyword: optional(string()),
+  keyword: optional(string().min(1).max(100)),
 });
 
 //Path Parameter 유효성 검사
