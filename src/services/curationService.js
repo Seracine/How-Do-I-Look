@@ -45,6 +45,19 @@ const curationService = {
         });
         return curation;
     },
+    deleteCuration: async (curationId, password) => {
+        const curationPassword = await prisma.curation.findUnique({
+            where: { id: curationId },
+            select: { password: true },
+        });
+        // 비밀번호가 없거나 일치하지 않는 경우 예외 처리
+        if (!curationPassword) { throw new Error('Curation not found'); }
+        if (curationPassword.password !== password) { throw new Error('Invalid password'); }
+
+        await prisma.curation.delete({
+            where: { id: curationId },
+        });
+    }
 };
 
 export default curationService;

@@ -19,12 +19,26 @@ const curationControllers = {
                 res.status(404).send({ message: '존재하지 않습니다' });
             } else if (error.message === 'Invalid password') {
                 res.status(403).send({ message: '비밀번호가 틀렸습니다' });
-            } 
+            } else {
+                res.status(400).send({ message: '잘못된 요청입니다' });
+            }
         }
     },
     deleteCuration: async (req, res) => {
-
-        res.status(200).send();
+        const curationId = parseInt(req.params.curationId);
+        const password = req.body.password;
+        try {
+            await curationService.deleteCuration(curationId, password);
+            res.status(200).send({ message: '큐레이팅 삭제 성공' });
+        } catch (error) {
+            if (error.message === 'Curation not found') {
+                return res.status(404).send({ message: '존재하지 않습니다' });
+            } else if (error.message === 'Invalid password') {
+                return res.status(403).send({ message: '비밀번호가 틀렸습니다' });
+            } else {
+                return res.status(400).send({ message: '잘못된 요청입니다' });
+            }
+        }
     },
     getCurationList: async (req, res) => {
 
