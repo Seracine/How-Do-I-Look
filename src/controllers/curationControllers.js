@@ -41,7 +41,8 @@ const curationControllers = {
         }
     },
     getCurationList: async (req, res) => {
-
+        const { styleId, pageSize = 5, searchBy, keyword } = req.params;
+        const curations = await curationService.getCurationList(parseInt(styleId));
         res.status(200).send();
     },
 };

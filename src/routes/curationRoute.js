@@ -13,7 +13,7 @@ curationRouter.route('/')
 
 curationRouter.route('/:curationId')
     // Curation 수정
-    .patch(curationControllers.updateCuration)
+    .put(curationControllers.updateCuration)
     // Curation 삭제
     .delete(curationControllers.deleteCuration);
 
