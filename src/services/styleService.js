@@ -161,5 +161,45 @@ const styleService = {
             tags: style.tags.map(({ tagname }) => tagname),
         };
     },
+    
+    deleteStyle: async (styleId, styleBody) => { // 현재 로직대로면 tag가 0개인 경우에도 테이블에 남아있게 됨. 남겨도 될지는 고민 - 추후에 같은 이름의 태그가 들어오면 해당 레코드를 사용하면 되므로
+        const Style = await prisma.style.findUnique({ // 여기서 못찾으면 컨트롤러에서 에러 처리
+            where: { id: styleId },
+            select: { //category랑 tags는 응답 형식에 맞추기 위해 별도로 추가, curationCount도 findmany메서드 등을 통해 개수 확인 후 추가
+                password: true,
+                tags: true,
+            },
+        })
+        if (!Style)
+            throw new Error("E404");
+        if (styleBody.password !== Style.password) { // 비밀번호가 맞지 않을 경우 에러, 해쉬 처리후 비교 필요
+            throw new Error("E403");
+        }
+
+        await prisma.style.update({ // 태그 중간 테이블 연결해제
+            where: { id: styleId },
+            data: {
+                tags: {
+                    set: [],
+                },
+            },
+        });
+        const StyleTags = Style.tags.map(t => t.tagname);
+        await prisma.tag.updateMany({ // 스타일에 등록된 태그들 숫자 1씩 감소
+            where: {
+                tagname: {
+                    in: StyleTags,
+                },
+            },
+            data: {
+                count: {
+                    decrement: 1,
+                },
+            },
+        })
+        await prisma.style.delete({ // 스타일제거, category는 cascade로 같이 지워짐
+            where: { id: styleId },
+        })
+    },
 }
 export default styleService;

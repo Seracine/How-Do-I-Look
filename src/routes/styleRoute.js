@@ -8,5 +8,5 @@ styleRouter.route('/')
 //  .post(validations.createStyleValidation, styleController.postStyle)  - 오류 처리 후
 styleRouter.route('/:styleId')
     .put(styleController.putStyle)
-    
+    .delete(styleController.deleteStyle)
 export default styleRouter;
