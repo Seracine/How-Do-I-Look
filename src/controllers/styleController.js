@@ -40,7 +40,7 @@ const styleController = {
             }
         }
     },
-    
+
     deleteStyle: async (req, res) => {
         const styleBody = {
             password: req.body.password,

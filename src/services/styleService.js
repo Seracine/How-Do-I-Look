@@ -63,14 +63,7 @@ const styleService = {
         const oldStyle = await prisma.style.findUnique({
             where: { id: styleId },
             select: {
-                id: true,
-                nickname: true,
                 password: true,
-                title: true,
-                content: true,
-                viewCount: true,
-                createdAt: true,
-                imageUrls: true,
                 tags: true,
             },
         })
@@ -161,7 +154,7 @@ const styleService = {
             tags: style.tags.map(({ tagname }) => tagname),
         };
     },
-    
+
     deleteStyle: async (styleId, styleBody) => { // 현재 로직대로면 tag가 0개인 경우에도 테이블에 남아있게 됨. 남겨도 될지는 고민 - 추후에 같은 이름의 태그가 들어오면 해당 레코드를 사용하면 되므로
         const Style = await prisma.style.findUnique({ // 여기서 못찾으면 컨트롤러에서 에러 처리
             where: { id: styleId },
@@ -201,5 +194,7 @@ const styleService = {
             where: { id: styleId },
         })
     },
+
+
 }
 export default styleService;
