@@ -1,6 +1,10 @@
-import express from 'express';
+import express from 'express'
+import styleController from '../controllers/styleController.js'
 
-const styleRouter = express.Router();
+const styleRouter = express.Router()
 
+styleRouter.route('/')
+    .post(styleController.postStyle)
+//  .post(validations.createStyleValidation, styleController.postStyle)  - 오류 처리 후
 
 export default styleRouter;
