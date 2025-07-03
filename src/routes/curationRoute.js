@@ -1,6 +1,6 @@
 import express from 'express';
 // import { validateBody, curatingFormInputSchema } from '../middlewares/validationMiddleware.js';
-import * as curationControllers from '../controllers/curationControllers.js';
+import curationControllers from '../controllers/curationControllers.js';
 
 const curationRouter = express.Router({ mergeParams: true });
 
