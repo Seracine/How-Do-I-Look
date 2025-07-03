@@ -57,6 +57,46 @@ const curationService = {
         await prisma.curation.delete({
             where: { id: curationId },
         });
+    },
+    getCurationList: async (styleId, page = 1, pageSize = 5, searchBy, keyword = '') => {
+        const skip = (page - 1) * pageSize;
+        const where = keyword
+            ? {
+                styleId,
+                [searchBy]: {
+                    contains: keyword,
+                    mode: 'insensitive',
+                }
+            } : { styleId };
+
+        const curations = await prisma.curation.findMany({
+            where,
+            orderBy: { createdAt: 'desc' },
+            skip,
+            take: pageSize,
+            select: {
+                id: true,
+                nickname: true,
+                content: true,
+                trendy: true,
+                personality: true,
+                practicality: true,
+                costEffectiveness: true,
+                createdAt: true,
+            },
+        });
+
+        const totalCount = await prisma.curation.count({ where });
+        const totalPages = Math.ceil(totalCount / pageSize);
+
+        
+        const curationList = {
+            currentPage: page,
+            totalPages,
+            totalItemCount: totalCount,
+            data: curations,
+        }
+        return curationList;
     }
 };
 

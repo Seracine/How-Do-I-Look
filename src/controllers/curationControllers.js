@@ -41,9 +41,14 @@ const curationControllers = {
         }
     },
     getCurationList: async (req, res) => {
-        const { styleId, pageSize = 5, searchBy, keyword } = req.params;
-        const curations = await curationService.getCurationList(parseInt(styleId));
-        res.status(200).send();
+        try {
+            const { styleId, page = 1, pageSize = 5, searchBy, keyword = '' } = req.params;
+            const curations = await curationService.getCurationList(parseInt(styleId), page, pageSize, searchBy, keyword);
+            res.status(200).send(curations);
+        } catch (error) {
+            console.error(error);
+            res.status(400).send({ message: '잘못된 요청입니다' });
+        }
     },
 };
 
