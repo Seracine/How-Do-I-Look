@@ -1,6 +1,6 @@
 import express from 'express';
 // import { validateBody, curatingFormInputSchema } from '../middlewares/validationMiddleware.js';
-import * as curationControllers from '../controllers/curationControllers.js';
+import curationControllers from '../controllers/curationControllers.js';
 
 const curationRouter = express.Router({ mergeParams: true });
 
@@ -13,7 +13,7 @@ curationRouter.route('/')
 
 curationRouter.route('/:curationId')
     // Curation 수정
-    .patch(curationControllers.updateCuration)
+    .put(curationControllers.updateCuration)
     // Curation 삭제
     .delete(curationControllers.deleteCuration);
 
