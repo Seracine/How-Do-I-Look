@@ -223,7 +223,7 @@ const styleService = {
                 where.content = { contains: keyword };
                 break;
             case 'tag': // 태그명은 일부가 아니라 완전히 동일해야함
-                where.tags = { some: { tagname: { contains: keyword } } };
+                where.tags = { some: { tagname: keyword } };
                 break;
             case 'title':
             default:
