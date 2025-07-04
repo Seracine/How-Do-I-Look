@@ -6,7 +6,8 @@ const uploadCotroller = {
       if(!req.file) {
         throw new Error("E400");
       };
-      const imageUrl = uploadService.createImageUrl(req.file);
+      const filename = req.file.filename
+      const imageUrl = uploadService.createImageUrl(filename);
       res.status(200).json({imageUrl});
     } catch (error){
       next(error);
