@@ -8,6 +8,8 @@ replyRouter.route('/')
     replyController.createReply
   );
   
+replyRouter.route('/:id')
+  .put(replyController.updateReply);
 
 export default replyRouter;
 

@@ -1,4 +1,5 @@
 import replyService from '../services/replyService.js'
+import { prisma } from '../utils/prismaInstance.js';
 
 const curationControllers = {
   createReply: async (req, res) => {
@@ -13,7 +14,7 @@ const curationControllers = {
 
       return res.status(201).json({
         id: reply.id,
-        nickname: reply.user?.nickname || '익명', // user가 null일 때 대비       
+        nickname: reply.curation?.Style?.nickname || '익명',
         content: reply.content,
         createdAt: reply.createdAt
       });
@@ -39,6 +40,26 @@ const curationControllers = {
 
       return res.status(error.status).json({ message: error.message })
     }
+  },
+
+  updateReply: async (req, res) => {
+    const replyId = parseInt(req.params.id);
+    const { content, password, curationId } = req.body;
+    const hash = password;
+
+    const reply = await replyService.updateReply({
+      replyId,
+      content,
+      password: hash,
+      curationId,
+    })
+
+    return res.status(201).json({
+      id: reply.id,
+      nickname: reply.curation?.Style?.nickname || '익명',
+      content: reply.content,
+      createdAt: reply.createdAt
+    });
   }
 }
 
