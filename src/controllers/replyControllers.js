@@ -3,7 +3,7 @@ import sanitizeHtml from 'sanitize-html'; // npm install sanitize-html 실행 �
 
 import { prisma } from '../prismaClient.js';
 
-export const addReply = async (req, res) => {
+export const replyControllers = async (req, res) => {
   try {
     const { content, password } = req.body;
     const { commentId } = req.params;

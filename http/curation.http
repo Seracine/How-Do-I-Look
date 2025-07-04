@@ -1,0 +1,35 @@
+POST http://localhost:3000/styles/1/curations
+Content-Type: application/json
+
+{
+  "nickname": "시연용아이디입니다.",
+  "password": "curationpass",
+  "content": "정말 유용하고 멋진 코디입니다! 겨울에 참고할게요.",
+  "trendy": 5,
+  "personality": 4,
+  "practicality": 5,
+  "costEffectiveness": 4
+}
+
+###
+
+PUT http://localhost:3000/curations/9
+Content-Type: application/json
+
+{
+  "password": "curationpass",
+  "content": "정말 유용하고 멋진 코디입니다! 겨울에 참고할게요.",
+  "trendy": 8,
+  "personality": 8,
+  "practicality": 7,
+  "costEffectiveness": 5
+}
+
+###
+
+DELETE http://localhost:3000/curations/9
+Content-Type: application/json
+
+{
+  "password": "curationpass"
+}
