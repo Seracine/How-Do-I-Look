@@ -194,7 +194,7 @@ const styleService = {
             where: { id: styleId },
         })
     },
-    
+
     getStyleList: async (queryParams) => {
         const { page = 1, pageSize = 12, sortBy = 'latest', searchBy, keyword = '', tag = '' } = queryParams;
 
@@ -280,6 +280,42 @@ const styleService = {
         }
 
         return resStyleList;
+    },
+
+    getStyle: async (styleId) => {
+        const style = await prisma.style.update({ // 있는지 찾고, viewcount1 증가, 없는 경우 P2025코드로 에러 던짐
+            where: { id: styleId },
+            select: { //category, tags, curationCount는 응답 형식에 맞추기 위해 별도 과정 추가
+                id: true,
+                nickname: true,
+                title: true,
+                content: true,
+                viewCount: true,
+                createdAt: true,
+                categories: true,
+                tags: true,
+                imageUrls: true,
+                _count: {
+                    select: {
+                        curation: true,
+                    },
+                },
+            },
+            data: {
+                viewCount: {
+                    increment: 1,
+                },
+            },
+        })
+
+        style.curationCount = style._count.curation;
+        style._count = undefined; // curationCount에 정의를 해주었으므로 속성 제거
+        style.categories = convertCategoriesForRes(style.categories); // Response 타입으로 형식 맞추기
+
+        return { // tagname만 꺼내와서 배열로 추가 후 리턴
+            ...style,
+            tags: style.tags.map(({ tagname }) => tagname),
+        };
     },
 }
 export default styleService;
