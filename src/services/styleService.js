@@ -1,6 +1,7 @@
 import { prisma } from '../utils/prismaInstance.js'
 import { convertCategoriesForRes, convertCategoriesForDB } from '../utils/categoryUtil.js'
 import { hashPassword, checkPassword } from '../utils/passwordHash.js';
+
 const styleService = {
     createStyle: async (styleBody) => {
         const { categories: categoriesReq, tags: tagNames, password, ...styleField } = styleBody;
@@ -314,4 +315,5 @@ const styleService = {
         };
     },
 }
+
 export default styleService;
