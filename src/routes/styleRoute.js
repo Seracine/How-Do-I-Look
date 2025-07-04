@@ -10,5 +10,6 @@ styleRouter.route('/')
 styleRouter.route('/:styleId')
     .put(styleController.putStyle)
     .delete(styleController.deleteStyle)
+    .get(styleController.getStyle)
 
 export default styleRouter;
