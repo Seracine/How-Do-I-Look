@@ -1,14 +1,15 @@
 import { prisma } from '../utils/prismaInstance.js'
 import { convertCategoriesForRes, convertCategoriesForDB } from '../utils/categoryUtil.js'
-
+import { hashPassword, checkPassword } from '../utils/passwordHash.js';
 const styleService = {
     createStyle: async (styleBody) => {
-        const { categories: categoriesReq, tags: tagNames, ...styleField } = styleBody;
+        const { categories: categoriesReq, tags: tagNames, password, ...styleField } = styleBody;
         const categories = convertCategoriesForDB(categoriesReq);
 
         const style = await prisma.style.create({
             data: {
                 ...styleField,
+                password: hashPassword(password),
                 categories: {
                     create: categories,
                 },
@@ -69,7 +70,7 @@ const styleService = {
         })
         if (!oldStyle)  // 여기서 못찾으면 컨트롤러에서 에러 처리 - 추후 에러 코드를 던지는 식으로 변경
             throw new Error("E404");
-        if (styleBody.password !== oldStyle.password) { // 비밀번호가 맞지 않을 경우 에러, 해쉬 처리후 비교 필요
+        if (!checkPassword(styleBody.password, oldStyle.password)) { // 비밀번호가 맞지 않을 경우 에러, 해쉬 처리후 비교 필요
             throw new Error("E403");
         }
 
@@ -98,12 +99,12 @@ const styleService = {
             },
         })
 
-        const { categories: categoriesReq, tags: tagNames, ...styleField } = styleBody;
+        const { categories: categoriesReq, tags: tagNames, password, ...styleField } = styleBody;
         const categories = convertCategoriesForDB(categoriesReq);
 
         const style = await prisma.style.update({ // 수정할 내용으로 업데이트
             where: { id: styleId },
-            data: {
+            data: { //비밀번호가 수정되지는 않기 때문에 password는 제외함
                 ...styleField,
                 categories: {
                     create: categories,
@@ -165,7 +166,7 @@ const styleService = {
         })
         if (!Style)
             throw new Error("E404");
-        if (styleBody.password !== Style.password) { // 비밀번호가 맞지 않을 경우 에러, 해쉬 처리후 비교 필요
+        if (!checkPassword(styleBody.password, Style.password)) { // 비밀번호가 맞지 않을 경우 에러, 해쉬 처리후 비교 필요
             throw new Error("E403");
         }
 
@@ -214,22 +215,18 @@ const styleService = {
         }
 
         // where 조건 정리
-        let where = {}
-        switch (searchBy) { // nickname | title | content | tag
-            case 'nickname':
-                where.nickname = { contains: keyword };
-                break;
-            case 'content':
-                where.content = { contains: keyword };
-                break;
-            case 'tag': // 태그명은 일부가 아니라 완전히 동일해야함
-                where.tags = { some: { tagname: keyword } };
-                break;
-            case 'title':
-            default:
-                where.title = { contains: keyword };
-                break;
-        };
+        let where;
+        if (searchBy === 'tag') { // nickname | title | content | tag
+            where = { tags: { some: { tagname: keyword } } }; // 태그명은 일부가 아니라 완전히 동일해야함
+        } else {
+            where = keyword
+                ? {
+                    [searchBy]: {
+                        contains: keyword,
+                        mode: 'insensitive',
+                    }
+                } : {};
+        }
 
         // 조건에 맞는 style들을 검색해서 정렬된 값 가져오기
         const styleList = await prisma.style.findMany({
@@ -250,7 +247,6 @@ const styleService = {
                         curation: true,
                     },
                 },
-
             },
             where,
             orderBy,
