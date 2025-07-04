@@ -1,7 +1,54 @@
-import bcrypt from 'bcrypt'; // npm install bcrypt --save 실행 필수
-import sanitizeHtml from 'sanitize-html'; // npm install sanitize-html 실행 필수 -> 사용할지 말지 고민중...
+import replyService from '../services/replyService.js'
 
-import { prisma } from '../prismaClient.js';
+const curationControllers = {
+  createReply: async (req, res) => {
+    try {
+      const { content, password, curationId } = req.body;
+      const hash = password;
+      const reply = await replyService.createReply({
+        content,
+        password: hash,
+        curationId,
+      })
+
+      return res.status(201).json({
+        id: reply.id,
+        nickname: reply.user?.nickname || '익명', // user가 null일 때 대비       
+        content: reply.content,
+        createdAt: reply.createdAt
+      });
+    } catch (error) {
+      console.error("Reply creation error:", error);
+      if (error.message === "COMMENT_ALREADY_EXISTS") {
+        error.status = 400
+        error.message = '이미 해당 큐레이션에 댓글이 존재합니다.'
+      } else if (error.message === "INVALID_USER") {
+        error.status = 400
+        error.message = '올바른 사용자가 아닙니다'
+      }
+      else if (error.code === 'P2025') {
+        error.status = 404
+        error.message = '댓글을 찾을 수 없습니다.'
+      } else if (error.name === 'PrismaClientKnownRequestError') {
+        error.status = 500
+        error.message = '데이터베이스 관련 오류가 발생했습니다.'
+      } else {
+        error.status = 500
+        error.message = '서버 내부 오류'
+      }
+
+      return res.status(error.status).json({ message: error.message })
+    }
+  }
+}
+
+export default curationControllers;
+
+
+
+
+
+/* import replyService from '../services/replyService.js'
 
 export const replyControllers = async (req, res) => {
   try {
@@ -57,3 +104,4 @@ export const replyControllers = async (req, res) => {
 }
 };
 
+ */
