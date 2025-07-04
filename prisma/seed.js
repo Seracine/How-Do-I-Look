@@ -75,7 +75,10 @@ async function main() {
                 costEffectiveness: curationRaw.costEffectiveness,
                 ...(curationRaw.replyContent && { // ...을 사용해야 comment 속성이 객체에 병합됨
                     comment: { // replyContent가 있을 때만 reply 생성
-                        create: { content: curationRaw.replyContent },
+                        create: { 
+                            nickname: curationRaw.replyContent.nickname,
+                            content: curationRaw.replyContent.content,
+                        },
                     },
                 }),
             },
