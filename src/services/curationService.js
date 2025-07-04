@@ -58,7 +58,7 @@ const curationService = {
             where: { id: curationId },
         });
     },
-    getCurationList: async (styleId, page = 1, pageSize = 5, searchBy, keyword = '') => {
+    getCurationList: async (styleId, page, pageSize, searchBy, keyword) => {
         const skip = (page - 1) * pageSize;
         const where = keyword
             ? {
@@ -68,10 +68,10 @@ const curationService = {
                     mode: 'insensitive',
                 }
             } : { styleId };
-
-        const curations = await prisma.curation.findMany({
+        
+        let curations = await prisma.curation.findMany({
             where,
-            orderBy: { createdAt: 'desc' },
+            orderBy: { id: 'asc' },
             skip,
             take: pageSize,
             select: {
@@ -83,13 +83,25 @@ const curationService = {
                 practicality: true,
                 costEffectiveness: true,
                 createdAt: true,
+                comment: {
+                    select: {
+                        id: true,
+                        nickname: true,
+                        content: true,
+                        createdAt: true,
+                    }
+                },
             },
         });
 
+        curations = curations.map(curation => ({
+            ...curation,
+            comment: curation.comment || {},
+        }));
         const totalCount = await prisma.curation.count({ where });
         const totalPages = Math.ceil(totalCount / pageSize);
 
-        
+
         const curationList = {
             currentPage: page,
             totalPages,

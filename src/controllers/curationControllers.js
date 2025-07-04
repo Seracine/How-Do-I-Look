@@ -1,3 +1,4 @@
+import { parse } from 'dotenv';
 import curationService from '../services/curationService.js';
 
 const curationControllers = {
@@ -42,8 +43,9 @@ const curationControllers = {
     },
     getCurationList: async (req, res) => {
         try {
-            const { styleId, page = 1, pageSize = 5, searchBy, keyword = '' } = req.params;
-            const curations = await curationService.getCurationList(parseInt(styleId), page, pageSize, searchBy, keyword);
+            const styleId = parseInt(req.params.styleId);
+            const { page = 1, pageSize = 5, searchBy='', keyword = '' } = req.query;
+            const curations = await curationService.getCurationList(styleId, parseInt(page), parseInt(pageSize), searchBy, keyword);
             res.status(200).send(curations);
         } catch (error) {
             console.error(error);
