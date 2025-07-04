@@ -194,7 +194,92 @@ const styleService = {
             where: { id: styleId },
         })
     },
+    
+    getStyleList: async (queryParams) => {
+        const { page = 1, pageSize = 12, sortBy = 'latest', searchBy, keyword = '', tag = '' } = queryParams;
 
+        // orderBy 조건 정리
+        let orderBy;
+        switch (sortBy) { // latest | mostViewed | mostCurated
+            case 'mostViewed':
+                orderBy = { viewCount: 'desc' };
+                break;
+            case 'mostCurated':
+                orderBy = { curation: { _count: 'desc' } };
+                break;
+            case 'latest':
+            default:
+                orderBy = { createdAt: 'desc' };
+                break;
+        }
 
+        // where 조건 정리
+        let where = {}
+        switch (searchBy) { // nickname | title | content | tag
+            case 'nickname':
+                where.nickname = { contains: keyword };
+                break;
+            case 'content':
+                where.content = { contains: keyword };
+                break;
+            case 'tag': // 태그명은 일부가 아니라 완전히 동일해야함
+                where.tags = { some: { tagname: keyword } };
+                break;
+            case 'title':
+            default:
+                where.title = { contains: keyword };
+                break;
+        };
+
+        // 조건에 맞는 style들을 검색해서 정렬된 값 가져오기
+        const styleList = await prisma.style.findMany({
+            skip: parseInt((page - 1) * pageSize),
+            take: parseInt(pageSize),
+            select: {
+                id: true,
+                nickname: true,
+                title: true,
+                content: true,
+                viewCount: true,
+                createdAt: true,
+                categories: true,
+                tags: true,
+                imageUrls: true,
+                _count: {
+                    select: {
+                        curation: true,
+                    },
+                },
+
+            },
+            where,
+            orderBy,
+        })
+
+        // 응답 형식에 맞게 style 변환
+        const data = styleList.map(style => {
+            style.curationCount = style._count.curation;
+            style._count = undefined;
+            style.categories = convertCategoriesForRes(style.categories);
+            style.tags = style.tags.map(({ tagname }) => tagname);
+            style.thumbnail = style.imageUrls[0]; // 이미지들의 첫번째를 썸네일로 반환
+            style.imageUrls = undefined;
+            return style;
+        });
+
+        // 조건에 맞는 아이템 개수 조회 및 페이지 수 계산
+        const totalItemCount = await prisma.style.count({ where });
+        const totalPages = Math.ceil(totalItemCount / pageSize);
+
+        // 최종 결과 반환
+        const resStyleList = {
+            currentPage: page,
+            totalPages,
+            totalItemCount,
+            data,
+        }
+
+        return resStyleList;
+    },
 }
 export default styleService;
