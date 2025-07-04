@@ -1,10 +1,9 @@
 import express from 'express'
-import uploadCotroller from '../controllers/uploadController.js'
-import styleRouter from './styleRoute'
-
+import uploadController from '../controllers/uploadController.js'
+import { uploadFile } from '../middlewares/uploadMiddleware.js'
 const uploadRouter = express.Router()
 
 uploadRouter.route('/')
-.post(uploadCotroller.postImage)
+.post(uploadFile, uploadController.postImage)
 
-export default uploadRouter
+export default uploadRouter;
