@@ -60,6 +60,30 @@ const styleController = {
             }
         }
     },
+    
+    getStyleList: async (req, res) => {
+        const queryParams = {
+            page: req.query?.page,
+            pageSize: req.query?.pageSize,
+            sortBy: req.query?.sortBy,
+            searchBy: req.query?.searchBy,
+            keyword: req.query?.keyword,
+            tag: req.query.tag,
+        }
+        try {
+            const styleList = await styleService.getStyleList(queryParams)
+            res.status(200).json(styleList)
+        } catch (e) {
+            switch (e.message) {
+                case "E403":
+                    res.status(403).json({ message: "비밀번호가 틀렸습니다" })
+                    break;
+                case "E404":
+                    res.status(404).json({ message: "존재하지 않습니다" })
+                    break;
+            }
+        }
+    },
 }
 
 export default styleController
