@@ -1,5 +1,5 @@
 import { array, literal, number, object, optional, refine, string, union, size, } from 'superstruct';
-
+import { ValidationError } from '../utils/appError.js'
 export const handleValidationErrors = (res, errors) => {
 
   const extractedErrors = errors.failures().map(failure => {
@@ -34,7 +34,10 @@ export const titleSchema = size(string(), 1, 30);
 
 export const contentSchema = size(string(), 1, 500);
 
-export const tagSchema = size(string(), 1, 20);
+export const tagSchema = union([
+  literal(''),
+  size(string(), 1, 20)
+]);
 
 export const tagsArraySchema = refine(array(tagSchema), 'tagsArrayLimit', (value) => {
     return value.length <= 3 || '태그는 최대 3개까지 입력할 수 있습니다.';
@@ -220,7 +223,10 @@ export const stylesQuerySchema = object({
     literal(searchByStyleEnum.content),
     literal(searchByStyleEnum.tag),
   ])),
-  keyword: optional(size(string(), 1, 100)),
+  keyword: optional(union([
+    literal(''),
+    size(string(), 1, 100)
+  ])),
   tag: optional(tagSchema),
 });
 
@@ -246,10 +252,6 @@ export const curationsQuerySchema = object({
   keyword: optional(size(string(), 1, 100)),
 });
 
-//Path Parameter 유효성 검사
-export const pathIdSchema = object({
-  id: intIdSchema,
-});
 //유효성 검사 미들웨어
 export const validateBody = (schema) => (req, res, next) => {
   try {
@@ -257,7 +259,8 @@ export const validateBody = (schema) => (req, res, next) => {
     next();
   } catch (error) {
     if (error instanceof Error && 'failures' in error) {
-      return handleValidationErrors(res, error);
+      console.log(error.message)
+      throw new ValidationError
     }
     next(error);
   }
@@ -265,23 +268,51 @@ export const validateBody = (schema) => (req, res, next) => {
 
 export const validateQuery = (schema) => (req, res, next) => {
   try {
-    schema.create(req.query);
+    const parsedQuery = {};
+    for (const key in req.query) {
+      // 숫자여야 할 쿼리 파라미터 (예: page, pageSize)를 여기에 추가
+      if (['page', 'pageSize'].includes(key) && req.query[key] !== undefined) {
+        const numValue = parseInt(req.query[key], 10);
+        parsedQuery[key] = isNaN(numValue) ? req.query[key] : numValue;
+      } else {
+        parsedQuery[key] = req.query[key];
+      }
+    }
+    schema.create(parsedQuery);
     next();
   } catch (error) {
     if (error instanceof Error && 'failures' in error) {
-      return handleValidationErrors(res, error);
+      console.log(error.message)
+      throw new ValidationError
     }
     next(error);
   }
 };
 
-export const validateParams = (schema) => (req, res, next) => {
+export const validateParams = (paramKeys) => (req, res, next) => {
   try {
-    schema.create(req.params);
+    const parsedParams = {};
+    const schemaFields = {}; // 검증에 사용할 스키마 필드를 동적으로 만듭니다.
+    for (const key of paramKeys) {
+      const rawValue = req.params[key];
+
+      if (rawValue === undefined) {
+        parsedParams[key] = undefined;
+      } else {
+        const numValue = parseInt(rawValue, 10);
+        // 숫자로 변환 성공하면 숫자, 실패하면 원본 문자열을 parsedParams에 할당
+        parsedParams[key] = isNaN(numValue) ? rawValue : numValue;
+      }
+      schemaFields[key] = intIdSchema;
+    }
+    // 동적으로 생성된 object 스키마로 parsedParams를 검증합니다.
+    const dynamicSchema = object(schemaFields);
+    dynamicSchema.create(parsedParams);
     next();
   } catch (error) {
     if (error instanceof Error && 'failures' in error) {
-      return handleValidationErrors(res, error);
+      console.log(error.message)
+      throw new ValidationError
     }
     next(error);
   }

@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));// URL-encoded 본문 파싱 미들웨어 (폼 데이터 받을 때 필요)
 
 app.use('/images', uploadRouter);//이미지 업로드 라우터 설정
-app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));//저장된 이미지 사용을 위한 설정
+app.use('/images', express.static('uploads'));//저장된 이미지 사용을 위한 설정
 app.use('/styles', styleRouter); // 스타일 라우터 설정
 app.use('/curations', curationRouter); // Curation 라우터 설정
 app.use('/styles/:styleId/curations', curationRouter); // Curation 라우터를 스타일 라우터에 중첩

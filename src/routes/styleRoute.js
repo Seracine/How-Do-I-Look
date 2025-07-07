@@ -1,15 +1,35 @@
-import express from 'express'
-import styleController from '../controllers/styleController.js'
+import express from 'express';
+import styleController from '../controllers/styleController.js';
+import {
+    validateBody,
+    validateQuery,
+    validateParams,
+    styleFormInputSchema,
+    styleUpdateFormInputSchema,
+    styleDeleteFormInputSchema,
+    stylesQuerySchema,
+} from '../middlewares/validationMiddleware.js';
 
-const styleRouter = express.Router()
+const styleRouter = express.Router();
 
 styleRouter.route('/')
-    .post(styleController.postStyle)
-//  .post(validations.createStyleValidation, styleController.postStyle)  - 오류 처리 후
-    .get(styleController.getStyleList)
+    .post(validateBody(styleFormInputSchema), styleController.postStyle)
+    .get(validateQuery(stylesQuerySchema), styleController.getStyleList);
+
 styleRouter.route('/:styleId')
-    .put(styleController.putStyle)
-    .delete(styleController.deleteStyle)
-    .get(styleController.getStyle)
+    .put(
+        validateParams(['styleId']),
+        validateBody(styleUpdateFormInputSchema),
+        styleController.putStyle
+    )
+    .delete(
+        validateParams(['styleId']),
+        validateBody(styleDeleteFormInputSchema),
+        styleController.deleteStyle
+    )
+    .get(
+        validateParams(['styleId']),
+        styleController.getStyle
+    );
 
 export default styleRouter;
