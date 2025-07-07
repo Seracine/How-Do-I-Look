@@ -1,78 +1,55 @@
 import { prisma } from '../utils/prismaInstance.js';
 
 const commentService = {
-    createComment: async ({ curationId, content, password }) => {
+    createComment: async (commentBody) => {
+        const { curationId, content, password } = commentBody
         const curation = await prisma.curation.findUnique({
             where: { id: Number(curationId) },
-            select: {
+            include: {
                 Style: true,
-                content: true,
             },
         });
-
-        if (curation?.content) {
-            throw new Error('답글 내용이 존재합니다.')
-        } else if (curation.Style.password !== password) {
-            throw new Error('유효하지 않은 사용자입니다.')
+        if (curation.password !== password) {
+            throw new Error('비밀번호가 일치하지 않습니다.');
         }
 
         return prisma.comment.create({
             data: {
                 content: content,
+                nickname: '1',
                 curation: { connect: { id: Number(curationId) } }
             },
             select: {
                 id: true,
-                curation: {
-                    select: {
-                        Style: {
-                            select: {
-                                nickname: true
-                            }
-                        }
-                    }
-                },
+                nickname: true,
                 content: true,
-                createdAt: true,
             }
-        }). then(comment => ({
-            id: rCommenteply.id,
-            nickname: Comment.curation.Style.nickname,
-            content: Comment.content,
-            createdAt: Comment.createdAt
-        }));
+        });
     },
-    updateComment: async ({ commentId, content, password, curationId }) => {
-        const curation = await prisma.curation.findUnique({
-            where: { id: Number(curationId) },
+
+    updateComment: async (commentBody) => {
+        const { commentId, content, password } = commentBody
+        const comment = await prisma.comment.findUnique({
+            where: { id: Number(commentId) },
             include: {
-                Style: true,
-                comment: true,
+                curation: {
+                    include: {
+                        Style: true
+                    }
+                }
             },
         });
-        if (curation.Style.password !== password) {
-            throw new Error('INVALID_USER')
-        }
+        
 
         return prisma.comment.update({
-            where: { id: commentId },
+            where: { id: Number(commentId) },
             data: {
                 content: content,
-                curation: { connect: { id: Number(curationId) } }
             },
             select: {
                 id: true,
-                curation: {
-                    select: {
-                        Style: {
-                            select: {
-                                nickname: true
-                            }
-                        }
-                    }
-                },
+                nickname: true,
                 content: true,
-                createdAt: true,
             }
         })
     }

@@ -1,55 +1,50 @@
 import commentService from '../services/commentService.js'
-import { prisma } from '../utils/prismaInstance.js';
 
 const commentControllers = {
   createComment: async (req, res) => {
-    try {
-      const { content, password, curationId } = req.body;
-      const hash = password;
-      const comment = await commentService.createComment({
-        content,
-        password: hash,
-        curationId,
-      })
-
-      return res.status(201).json({
-        id: comment.id,
-        nickname: comment.curation?.Style?.nickname || '익명',
-        content: comment.content,
-        createdAt: comment.createdAt
-      });
-    } catch (error) {
-      console.error("Comment creation error:", error);
-      if (error.message === "Bad Request") {
-        error.status = 400
-        error.message = '잘못된 요청입니다.'
-      }
-      return res.status(error.status).json({ message: error.message })
-    }
-  },
-
-  updateComment: async (req, res) => {
-    const commentId = parseInt(req.params.id);
-    const { content, password, curationId } = req.body;
+    const curationId = parseInt(req.params.id);
+    const { content, password } = req.body;
     const hash = password;
 
-    const comment = await commentService.updateComment({
-      commentId,
+    const commentBody = {
       content,
       password: hash,
       curationId,
-    })
+    }
 
-    return res.status(201).json({
-      id: comment.id,
-      nickname: comment.curation?.Style?.nickname || '익명',
-      content: comment.content,
-      createdAt: comment.createdAt
-    });
+    const comment = await commentService.createComment(commentBody);
+
+    return res.status(201).json({ comment });
+  },
+
+  updateComment: async (req, res) => {
+    try {
+      const commentId = parseInt(req.params.id);
+      const { content, password } = req.body;
+      const hash = password;
+
+      const commentBody = {
+        content,
+        password: hash,
+        commentId,
+      }
+      const comment = await commentService.updateComment(commentBody)
+
+      return res.status(200).json({ comment });
+    } catch (error) {
+      console.log('Error:',error);
+      if (error.message === 'comment not found') {
+        res.status(404).send({ message: '존재하지 않습니다' });
+      } else if (error.message === 'Invalid password') {
+        res.status(403).send({ message: '비밀번호가 틀렸습니다' });
+      } else {
+        res.status(400).send({ message: '잘못된 요청입니다' });
+      }
+    };
   }
 }
 
-export default commentControllers;
+  export default commentControllers;
 
 
 
