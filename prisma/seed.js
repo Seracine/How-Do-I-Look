@@ -60,7 +60,7 @@ async function main() {
     const createdCategories = await prisma.category.createMany({ data: categoriesToCreate });
     console.log(`Created ${createdCategories.count} categories.`);
 
-    // 4. Curation 및 Reply 데이터 생성
+    // 4. Curation 및 Comment 데이터 생성
     const createdCurations = [];
     for (const curationRaw of mockCurationRaw) {
         const curation = await prisma.curation.create({
@@ -73,11 +73,11 @@ async function main() {
                 personality: curationRaw.personality,
                 practicality: curationRaw.practicality,
                 costEffectiveness: curationRaw.costEffectiveness,
-                ...(curationRaw.replyContent && { // ...을 사용해야 comment 속성이 객체에 병합됨
-                    comment: { // replyContent가 있을 때만 reply 생성
+                ...(curationRaw.commentContent && { // ...을 사용해야 comment 속성이 객체에 병합됨
+                    comment: { // commentContent가 있을 때만 comment 생성
                         create: { 
-                            nickname: curationRaw.replyContent.nickname,
-                            content: curationRaw.replyContent.content,
+                            nickname: curationRaw.commentContent.nickname,
+                            content: curationRaw.commentContent.content,
                         },
                     },
                 }),
