@@ -111,7 +111,7 @@ export const mockCurationRaw = [
         password: 'password123',
         content: '색감 조합이 너무 좋네요! 데일리룩으로 딱이에요.',
         trendy: 4, personality: 3, practicality: 5, costEffectiveness: 4,
-        replyContent: {
+        commentContent: {
             nickname: '스타일마스터',
             content: '감사합니다! 편안하면서도 스타일리시한 느낌을 주고 싶었어요.',
         }
@@ -122,7 +122,7 @@ export const mockCurationRaw = [
         password: 'password123',
         content: '바지 핏이 정말 예술이네요. 어디 제품인가요?',
         trendy: 5, personality: 4, practicality: 4, costEffectiveness: 3,
-        replyContent: null
+        commentContent: null
     },
     {
         styleId: 2,
@@ -130,7 +130,7 @@ export const mockCurationRaw = [
         password: 'password123',
         content: '트렌치코트 핏이 예뻐요! 데이트룩으로 딱일듯.',
         trendy: 4, personality: 4, practicality: 3, costEffectiveness: 4,
-        replyContent: {
+        commentContent: {
             nickname: '패션러버',
             content: '감사합니다! 클래식한 느낌을 살리고 싶었어요.',
         }
@@ -141,7 +141,7 @@ export const mockCurationRaw = [
         password: 'password123',
         content: '이게 진짜 스트릿이죠! 너무 멋져요.',
         trendy: 5, personality: 5, practicality: 3, costEffectiveness: 2,
-        replyContent: null
+        commentContent: null
     },
     {
         styleId: 4,
@@ -149,7 +149,7 @@ export const mockCurationRaw = [
         password: 'password123',
         content: '코트랑 니트 조합이 환상적이네요. 고급스러워 보여요!',
         trendy: 4, personality: 4, practicality: 5, costEffectiveness: 3,
-        replyContent: {
+        commentContent: {
             nickname: '겨울감성',
             content: '감사합니다! 따뜻하고 세련된 느낌을 주고 싶었어요.',
         }
@@ -163,7 +163,7 @@ export const mockCurationRaw = [
         personality: 4,
         practicality: 4,
         costEffectiveness: 4,
-        replyContent: null
+        commentContent: null
     },
     {
         styleId: 5,
@@ -174,7 +174,7 @@ export const mockCurationRaw = [
         personality: 3,
         practicality: 5,
         costEffectiveness: 4,
-        replyContent: {
+        commentContent: {
             nickname: '여행자',
             content: '네, 휴가지에 최적화된 코디입니다!',
         }
@@ -188,7 +188,7 @@ export const mockCurationRaw = [
         personality: 5,
         practicality: 3,
         costEffectiveness: 4,
-        replyContent: {
+        commentContent: {
             nickname: '빈티지걸',
             content: '감사합니다! 빈티지샵에서 구매했어요.',
         }
