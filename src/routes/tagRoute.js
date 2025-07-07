@@ -4,6 +4,6 @@ import tagController from '../controllers/tagController.js'
 const tagRouter = express.Router()
 
 tagRouter.route('/')
-    .get(tagController.getPopularTags)
+    .get(tagController.getPopularTagList)
 
 export default tagRouter;

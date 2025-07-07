@@ -1,8 +1,8 @@
 import tagService from '../services/tagService.js'
 
 const tagController = {
-    getPopularTags: async (req, res) => {
-        const popularTags = await tagService.getPopularTags()
+    getPopularTagList: async (req, res) => {
+        const popularTags = await tagService.getPopularTagList()
         res.status(200).json(popularTags)
     },
 }
