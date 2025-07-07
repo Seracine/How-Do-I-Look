@@ -24,6 +24,6 @@ app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));//저�
 app.use('/styles', styleRouter); // 스타일 라우터 설정
 app.use('/curations', curationRouter); // Curation 라우터 설정
 app.use('/styles/:styleId/curations', curationRouter); // Curation 라우터를 스타일 라우터에 중첩
-app.use('/comments', commentRouter); // 답글 라우터 설정
+app.use('/curations/:curationId/comments', commentRouter); // 답글 라우터 설정
 
 app.listen(process.env.PORT || 3000, () => console.log("Server Starting..."));
