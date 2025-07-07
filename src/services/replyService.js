@@ -1,19 +1,20 @@
 import { prisma } from '../utils/prismaInstance.js';
 
-const ReplyService = {
+const replyService = {
     createReply: async ({ curationId, content, password }) => {
         const curation = await prisma.curation.findUnique({
             where: { id: Number(curationId) },
-            include: {
+            select: {
                 Style: true,
-                comment: true,
+                content: true,
+                nickname: true,
             },
         });
 
-        if (curation?.comment) {
-            throw new Error('COMMENT_ALREADY_EXISTS')
-        } else if (curation.Style.password !== password) {
-            throw new Error('INVALID_USER')
+        if (curation?.content) {
+            throw new Error('답글 내용이 존재합니다.')
+        } else if (curation.styleId.password !== password) {
+            throw new Error('유효하지 않은 사용자입니다.')
         }
 
         return prisma.reply.create({
@@ -21,18 +22,26 @@ const ReplyService = {
                 content: content,
                 curation: { connect: { id: Number(curationId) } }
             },
-            include: {
+            select: {
+                id: true,
                 curation: {
-                    include: {
+                    select: {
                         Style: {
                             select: {
                                 nickname: true
                             }
                         }
                     }
-                }
+                },
+                content: true,
+                createdAt: true,
             }
-        })
+        }). then(reply => ({
+            id: reply.id,
+            nickname: reply.curation.Style.nickname,
+            content: reply.content,
+            createdAt: reply.createdAt
+        }));
     },
     updateReply: async ({ replyId, content, password, curationId }) => {
         const curation = await prisma.curation.findUnique({
@@ -70,4 +79,4 @@ const ReplyService = {
     }
 }
 
-export default ReplyService
+export default replyService

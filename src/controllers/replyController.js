@@ -1,7 +1,7 @@
 import replyService from '../services/replyService.js'
 import { prisma } from '../utils/prismaInstance.js';
 
-const curationControllers = {
+const replyControllers = {
   createReply: async (req, res) => {
     try {
       const { content, password, curationId } = req.body;
@@ -20,24 +20,10 @@ const curationControllers = {
       });
     } catch (error) {
       console.error("Reply creation error:", error);
-      if (error.message === "COMMENT_ALREADY_EXISTS") {
+      if (error.message === "Bad Request") {
         error.status = 400
-        error.message = '이미 해당 큐레이션에 댓글이 존재합니다.'
-      } else if (error.message === "INVALID_USER") {
-        error.status = 400
-        error.message = '올바른 사용자가 아닙니다'
+        error.message = '잘못된 요청입니다.'
       }
-      else if (error.code === 'P2025') {
-        error.status = 404
-        error.message = '댓글을 찾을 수 없습니다.'
-      } else if (error.name === 'PrismaClientKnownRequestError') {
-        error.status = 500
-        error.message = '데이터베이스 관련 오류가 발생했습니다.'
-      } else {
-        error.status = 500
-        error.message = '서버 내부 오류'
-      }
-
       return res.status(error.status).json({ message: error.message })
     }
   },
@@ -63,7 +49,7 @@ const curationControllers = {
   }
 }
 
-export default curationControllers;
+export default replyControllers;
 
 
 

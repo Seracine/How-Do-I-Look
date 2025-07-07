@@ -7,10 +7,10 @@ replyRouter.route('/')
   .post(
     replyController.createReply
   );
-  
+
 replyRouter.route('/:id')
-  .put(replyController.updateReply);
+  .put(
+    replyController.updateReply
+  );
 
 export default replyRouter;
-
-// hash는 유틸 함수로 빼기
