@@ -1,23 +1,22 @@
 import { prisma } from '../utils/prismaInstance.js';
 
-const replyService = {
-    createReply: async ({ curationId, content, password }) => {
+const commentService = {
+    createComment: async ({ curationId, content, password }) => {
         const curation = await prisma.curation.findUnique({
             where: { id: Number(curationId) },
             select: {
                 Style: true,
                 content: true,
-                nickname: true,
             },
         });
 
         if (curation?.content) {
             throw new Error('답글 내용이 존재합니다.')
-        } else if (curation.styleId.password !== password) {
+        } else if (curation.Style.password !== password) {
             throw new Error('유효하지 않은 사용자입니다.')
         }
 
-        return prisma.reply.create({
+        return prisma.comment.create({
             data: {
                 content: content,
                 curation: { connect: { id: Number(curationId) } }
@@ -36,14 +35,14 @@ const replyService = {
                 content: true,
                 createdAt: true,
             }
-        }). then(reply => ({
-            id: reply.id,
-            nickname: reply.curation.Style.nickname,
-            content: reply.content,
-            createdAt: reply.createdAt
+        }). then(comment => ({
+            id: rCommenteply.id,
+            nickname: Comment.curation.Style.nickname,
+            content: Comment.content,
+            createdAt: Comment.createdAt
         }));
     },
-    updateReply: async ({ replyId, content, password, curationId }) => {
+    updateComment: async ({ commentId, content, password, curationId }) => {
         const curation = await prisma.curation.findUnique({
             where: { id: Number(curationId) },
             include: {
@@ -55,8 +54,8 @@ const replyService = {
             throw new Error('INVALID_USER')
         }
 
-        return prisma.reply.update({
-            where: { id: replyId },
+        return prisma.comment.update({
+            where: { id: commentId },
             data: {
                 content: content,
                 curation: { connect: { id: Number(curationId) } }
@@ -79,4 +78,4 @@ const replyService = {
     }
 }
 
-export default replyService
+export default commentService

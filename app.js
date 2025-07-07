@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import uploadRouter from './src/routes/uploadRoute.js';
 import styleRouter from './src/routes/styleRoute.js';
 import curationRouter from './src/routes/curationRoute.js';
-import replyRouter from './src/routes/replyRoute.js';
+import commentRouter from './src/routes/commentRoute.js';
 
 dotenv.config()
 
@@ -24,6 +24,6 @@ app.use('/images', express.static(path.join(__dirname, '..', 'uploads')));//저�
 app.use('/styles', styleRouter); // 스타일 라우터 설정
 app.use('/curations', curationRouter); // Curation 라우터 설정
 app.use('/styles/:styleId/curations', curationRouter); // Curation 라우터를 스타일 라우터에 중첩
-app.use('/comments', replyRouter);
+app.use('/comments', commentRouter);
 
 app.listen(process.env.PORT || 3000, () => console.log("Server Starting..."));

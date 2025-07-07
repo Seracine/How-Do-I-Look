@@ -1,25 +1,25 @@
-import replyService from '../services/replyService.js'
+import commentService from '../services/commentService.js'
 import { prisma } from '../utils/prismaInstance.js';
 
-const replyControllers = {
-  createReply: async (req, res) => {
+const commentControllers = {
+  createComment: async (req, res) => {
     try {
       const { content, password, curationId } = req.body;
       const hash = password;
-      const reply = await replyService.createReply({
+      const comment = await commentService.createComment({
         content,
         password: hash,
         curationId,
       })
 
       return res.status(201).json({
-        id: reply.id,
-        nickname: reply.curation?.Style?.nickname || '익명',
-        content: reply.content,
-        createdAt: reply.createdAt
+        id: comment.id,
+        nickname: comment.curation?.Style?.nickname || '익명',
+        content: comment.content,
+        createdAt: comment.createdAt
       });
     } catch (error) {
-      console.error("Reply creation error:", error);
+      console.error("Comment creation error:", error);
       if (error.message === "Bad Request") {
         error.status = 400
         error.message = '잘못된 요청입니다.'
@@ -28,28 +28,28 @@ const replyControllers = {
     }
   },
 
-  updateReply: async (req, res) => {
-    const replyId = parseInt(req.params.id);
+  updateComment: async (req, res) => {
+    const commentId = parseInt(req.params.id);
     const { content, password, curationId } = req.body;
     const hash = password;
 
-    const reply = await replyService.updateReply({
-      replyId,
+    const comment = await commentService.updateComment({
+      commentId,
       content,
       password: hash,
       curationId,
     })
 
     return res.status(201).json({
-      id: reply.id,
-      nickname: reply.curation?.Style?.nickname || '익명',
-      content: reply.content,
-      createdAt: reply.createdAt
+      id: comment.id,
+      nickname: comment.curation?.Style?.nickname || '익명',
+      content: comment.content,
+      createdAt: comment.createdAt
     });
   }
 }
 
-export default replyControllers;
+export default commentControllers;
 
 
 
