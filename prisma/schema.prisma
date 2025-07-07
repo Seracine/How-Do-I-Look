@@ -68,12 +68,12 @@ model Curation {
   costEffectiveness Int
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  comment           Reply?
+  comment           Comment?
   Style             Style    @relation(fields: [styleId], references: [id], onDelete: Cascade)
   styleId           Int
 }
 
-model Reply {
+model Comment {
   id         Int      @id @default(autoincrement())
   nickname   String
   content    String
