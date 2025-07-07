@@ -3,13 +3,7 @@ import { array, literal, number, object, optional, refine, string, union, size, 
 export const handleValidationErrors = (res, errors) => {
 
   const extractedErrors = errors.failures().map(failure => {
-    return {
-      field: failure.path.join('.'),
-      message: failure.message,
-      expected: failure.type,
-      received: typeof failure.value,
-      value: failure.value
-    };
+    return {message: failure.message};
   });
 
   return res.status(422).json({
