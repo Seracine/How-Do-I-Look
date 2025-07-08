@@ -1,5 +1,6 @@
 import { convertCategoryToEnumType } from '../src/utils/convertToEnum.js';
 import { prisma } from '../src/utils/prismaInstance.js';
+import { hashPassword } from '../src/utils/passwordHash.js';
 import {
     mockTags,
     mockStyles,
@@ -25,7 +26,7 @@ async function main() {
         const style = await prisma.style.create({
             data: {
                 nickname: styleData.nickname,
-                password: styleData.password,
+                password: hashPassword(styleData.password),
                 title: styleData.title,
                 content: styleData.content,
                 imageUrls: styleData.imageUrls,
@@ -67,7 +68,7 @@ async function main() {
             data: {
                 styleId: curationRaw.styleId,
                 nickname: curationRaw.nickname,
-                password: curationRaw.password,
+                password: hashPassword(curationRaw.password),
                 content: curationRaw.content,
                 trendy: curationRaw.trendy,
                 personality: curationRaw.personality,
