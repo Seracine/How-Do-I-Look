@@ -33,10 +33,9 @@ const commentControllers = {
   deleteComment: async (req, res) => {
     const commentId = parseInt(req.params.commentId)
     const curationId = parseInt(req.params.curationId, 10);
-    const { content, password } = req.body;
+    const { password } = req.body;
 
     const commentBody = {
-      content,
       password,
       commentId,
       curationId,

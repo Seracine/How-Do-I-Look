@@ -1,6 +1,6 @@
 import { prisma } from '../utils/prismaInstance.js';
 import { checkPassword } from '../utils/passwordHash.js';
-import { AppError, ForbiddenError, NotFoundError, ValidationError } from '../utils/appError.js';
+import { ValidationError, ForbiddenError, NotFoundError } from '../utils/appError.js';
 
 const commentService = {
     createComment: async (commentBody) => {
@@ -11,18 +11,14 @@ const commentService = {
                 Style: true,
             },
         });
-        
-        if (!content) { throw new ValidationError('잘못된 요청입니다'); }
 
         const isMatch = checkPassword(password, curation.Style.password);
-        if (!isMatch) { throw new ForbiddenError('비밀번호가 틀렸습니다'); }
-
-        const nickname = curation.Style.nickname;
+        if (!isMatch) { throw new ValidationError(); }
 
         const comment = await prisma.comment.create({
             data: {
                 content: content,
-                nickname: nickname,
+                nickname: curation.Style.nickname,
                 curation: { connect: { id: curationId } }
             },
             select: {
@@ -51,11 +47,10 @@ const commentService = {
                 }
             },
         });
-        if (!comment) { throw new NotFoundError('존재하지 않습니다'); }
-        if (!content) { throw new ValidationError('잘못된 요청입니다'); }
+        if (!comment) { throw new NotFoundError(); }
 
         const isMatch = checkPassword(password, comment.curation.Style.password);
-        if (!isMatch) { throw new ForbiddenError('비밀번호가 틀렸습니다'); }
+        if (!isMatch) { throw new ForbiddenError(); }
 
         return await prisma.comment.update({
             where: { id: commentId },
@@ -72,7 +67,7 @@ const commentService = {
     },
 
     deleteComment: async (commentBody) => {
-        const { content, password, commentId, curationId } = commentBody;
+        const { password, commentId, curationId } = commentBody;
         const comment = await prisma.comment.findFirst({
             where: { 
                 id: commentId,
@@ -87,11 +82,10 @@ const commentService = {
             },
         });
 
-        if (!comment) { throw new NotFoundError('존재하지 않습니다'); }
-        if (!content) { throw new ValidationError('잘못된 요청입니다'); }
+        if (!comment) { throw new NotFoundError(); }
 
         const isMatch = checkPassword(password, comment.curation.Style.password);
-        if (!isMatch) { throw new ForbiddenError('비밀번호가 틀렸습니다'); }
+        if (!isMatch) { throw new ForbiddenError(); }
 
         return prisma.comment.delete({
             where: { id: commentId },
