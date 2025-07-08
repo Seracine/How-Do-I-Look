@@ -6,9 +6,9 @@ const curationService = {
     createCuration: async (curationBody, styleId) => {
         const curation = await prisma.curation.create({
             data: {
+                ...curationBody,
                 // 비밀번호를 해싱하여 저장
                 password: hashPassword(curationBody.password),
-                ...curationBody,
                 Style: { connect: { id: styleId } },
             },
             select: {
@@ -32,7 +32,7 @@ const curationService = {
         })
         // 비밀번호가 없거나 일치하지 않는 경우 예외 처리
         if (!curationPassword) { throw new NotFoundError(); }
-        // 입력한 비밀번호와 해싱된 비밀번호를 비교
+        // 입력한 비밀번호와 해싱된 비밀번호를 비교1
         if (!checkPassword(password, curationPassword.password)) { throw new ForbiddenError(); }
       
         const curation = await prisma.curation.update({
