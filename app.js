@@ -8,7 +8,7 @@ import tagRouter from './src/routes/tagRoute.js';
 import styleRouter from './src/routes/styleRoute.js';
 import curationRouter from './src/routes/curationRoute.js';
 import { AppError } from './src/utils/appError.js';
-
+import commentRouter from './src/routes/commentRoute.js';
 
 dotenv.config()
 
@@ -36,5 +36,7 @@ app.use((err, req, res, next) => {
         return res.status(404).json({ message: "존재하지 않습니다" });
     }
 });
+app.use('/curations/:curationId/comments', commentRouter); // 답글 라우터 설정
+
 
 app.listen(process.env.PORT || 3000, () => console.log("Server Starting..."));
