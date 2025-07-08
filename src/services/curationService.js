@@ -1,10 +1,13 @@
 import { prisma } from '../utils/prismaInstance.js';
+import { hashPassword, checkPassword } from '../utils/passwordHash.js';
 import { AppError, ForbiddenError, NotFoundError } from '../utils/appError.js';
 
 const curationService = {
-    createCuration: async (curationBody, styleId) => {
+    createCuration: async (curationBody, styleId, password) => {
         const curation = await prisma.curation.create({
             data: {
+                // 비밀번호를 해싱하여 저장
+                password: hashPassword(password),
                 ...curationBody,
                 Style: { connect: { id: styleId } },
             },
@@ -28,9 +31,10 @@ const curationService = {
             select: { password: true },
         })
         // 비밀번호가 없거나 일치하지 않는 경우 예외 처리
-        if (!curationPassword) { throw new NotFoundError(); }
-        if (curationPassword.password !== password) { throw new ForbiddenError(); }
-
+        if (!curationPassword) { throw new Error('Curation not found'); }
+        // 입력한 비밀번호와 해싱된 비밀번호를 비교
+        if (!checkPassword(password, curationPassword.password)) { throw new Error('Invalid password'); }
+      
         const curation = await prisma.curation.update({
             where: { id: curationId },
             data: curationBody,
@@ -54,8 +58,9 @@ const curationService = {
             select: { password: true },
         });
         // 비밀번호가 없거나 일치하지 않는 경우 예외 처리
-        if (!curationPassword) { throw new NotFoundError(); }
-        if (curationPassword.password !== password) { throw new ForbiddenError(); }
+        if (!curationPassword) { throw new Error('Curation not found'); }
+        // 입력한 비밀번호와 해싱된 비밀번호를 비교
+        if (!checkPassword(password, curationPassword.password)) { throw new Error('Invalid password'); }
 
         await prisma.curation.delete({
             where: { id: curationId },
