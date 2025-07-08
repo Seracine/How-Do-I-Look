@@ -1,5 +1,5 @@
 import { prisma } from '../utils/prismaInstance.js';
-import { hashPassword, checkPassword } from '../utils/passwordHash.js';
+import { checkPassword } from '../utils/passwordHash.js';
 
 const commentService = {
     createComment: async (commentBody) => {
@@ -10,13 +10,13 @@ const commentService = {
                 Style: true,
             },
         });
+
+        const isMatch = checkPassword(password, curation.Style.password);
+        if (!isMatch) throw new Error('Invalid password');
+
         const nickname = curation.Style.nickname;
 
-        if (curation.Style.password !== password) {
-            throw new Error('비밀번호가 일치하지 않습니다.');
-        }
-
-        return prisma.comment.create({
+        const comment = prisma.comment.create({
             data: {
                 content: content,
                 nickname: nickname,
@@ -28,6 +28,7 @@ const commentService = {
                 content: true,
             }
         });
+        return comment;
     },
 
     updateComment: async (commentBody) => {
@@ -75,13 +76,14 @@ const commentService = {
             },
         });
 
+        
         if (!comment) {
             throw new Error('comment not found');
         }
-        if (comment.curation.Style.password !== password) {
-            throw new Error('Invalid password');
-        }
 
+        const isMatch = checkPassword(password, comment.curation.Style.password);
+        if (!isMatch) throw new Error('Invalid password');
+        
         return prisma.comment.delete({
             where: { id: commentId },
 
