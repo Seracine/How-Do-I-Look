@@ -36,7 +36,7 @@ const commentService = {
             include: {
                 curation: {
                     include: {
-                        Style: true
+                        Style: true,
                     }
                 }
             },
@@ -44,7 +44,7 @@ const commentService = {
         if (!comment) {
             throw new Error('comment not found');
         }
-        if (comment.curation.password !== password) {
+        if (comment.curation.Style.password !== password) {
             throw new Error('Invalid password');
         }
 
@@ -64,10 +64,11 @@ const commentService = {
     deleteComment: async (commentBody) => {
         const { password, commentId } = commentBody;
         const comment = await prisma.comment.findUnique({
-            where: { id: commentId }, include: {
+            where: { id: commentId }, 
+            include: {
                 curation: {
                     include: {
-                        Style: true
+                        Style: true,
                     }
                 }
             },
@@ -76,17 +77,12 @@ const commentService = {
         if (!comment) {
             throw new Error('comment not found');
         }
-        if (comment.curation.password !== password) {
+        if (comment.curation.Style.password !== password) {
             throw new Error('Invalid password');
         }
 
         return prisma.comment.delete({
             where: { id: commentId },
-            select: {
-                id: true,
-                nickname: true,
-                content: true,
-            }
 
         })
     }
