@@ -11,3 +11,11 @@ node_modules
 
 #http files
 /https
+
+#
+.DS_Store
+.vscode/
+package-lock.json
+src/.DS_Store
+src/controllers/.DS_Store
+src/services/.DS_Store
