@@ -11,7 +11,7 @@ const commentService = {
         });
         const nickname = curation.Style.nickname;
 
-        if (curation.password !== password) {
+        if (curation.Style.password !== password) {
             throw new Error('비밀번호가 일치하지 않습니다.');
         }
 
