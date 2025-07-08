@@ -1,4 +1,5 @@
 import { prisma } from '../utils/prismaInstance.js';
+import { AppError, ForbiddenError, NotFoundError } from '../utils/appError.js';
 
 const curationService = {
     createCuration: async (curationBody, styleId) => {
@@ -18,6 +19,7 @@ const curationService = {
                 createdAt: true,
             },
         });
+        if (!curation) { throw new NotFoundError(); }
         return curation;
     },
     updateCuration: async (curationId, password, curationBody) => {
@@ -26,8 +28,8 @@ const curationService = {
             select: { password: true },
         })
         // 비밀번호가 없거나 일치하지 않는 경우 예외 처리
-        if (!curationPassword) { throw new Error('Curation not found'); }
-        if (curationPassword.password !== password) { throw new Error('Invalid password'); }
+        if (!curationPassword) { throw new NotFoundError(); }
+        if (curationPassword.password !== password) { throw new ForbiddenError(); }
 
         const curation = await prisma.curation.update({
             where: { id: curationId },
@@ -43,6 +45,7 @@ const curationService = {
                 createdAt: true,
             },
         });
+        if (!curation) { throw new NotFoundError(); }
         return curation;
     },
     deleteCuration: async (curationId, password) => {
@@ -51,8 +54,8 @@ const curationService = {
             select: { password: true },
         });
         // 비밀번호가 없거나 일치하지 않는 경우 예외 처리
-        if (!curationPassword) { throw new Error('Curation not found'); }
-        if (curationPassword.password !== password) { throw new Error('Invalid password'); }
+        if (!curationPassword) { throw new NotFoundError(); }
+        if (curationPassword.password !== password) { throw new ForbiddenError(); }
 
         await prisma.curation.delete({
             where: { id: curationId },
@@ -68,7 +71,7 @@ const curationService = {
                     mode: 'insensitive',
                 }
             } : { styleId };
-        
+
         let curations = await prisma.curation.findMany({
             where,
             orderBy: { id: 'asc' },
@@ -94,6 +97,7 @@ const curationService = {
             },
         });
 
+        if (!curations) { throw new NotFoundError(); }
         curations = curations.map(curation => ({
             ...curation,
             comment: curation.comment || {},
