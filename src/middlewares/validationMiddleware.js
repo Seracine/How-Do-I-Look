@@ -199,24 +199,24 @@ export const curatingUpdateFormInputSchema = object({
 export const curatingDeleteFormInputSchema = object({
   password: passwordSchema,
 });
-// reply 유효성 검사
-export const replyFormInputSchema = object({
+// comment 유효성 검사
+export const commentFormInputSchema = object({
   content: contentSchema,
   password: passwordSchema,
 });
 
-export const replyUpdateFormInputSchema = object({
+export const commentUpdateFormInputSchema = object({
   content: optional(contentSchema),
   password: passwordSchema,
 });
 
-export const replyDeleteFormInputSchema = object({
+export const commentDeleteFormInputSchema = object({
   password: passwordSchema,
 });
 //쿼리 스키마 유효성 검사
 export const stylesQuerySchema = object({
-  page: optional(positiveIntegerSchema), 
-  pageSize: optional(positiveIntegerSchema), 
+  page: optional(positiveIntegerSchema),
+  pageSize: optional(positiveIntegerSchema),
   sortBy: optional(union([
     literal(sortByEnum.latest),
     literal(sortByEnum.mostViewed),
@@ -243,13 +243,13 @@ export const rankingsQuerySchema = object({
     literal(rankByEnum.practicality),
     literal(rankByEnum.costEffectiveness),
   ]),
-  page: optional(positiveIntegerSchema), 
-  pageSize: optional(positiveIntegerSchema), 
+  page: optional(positiveIntegerSchema),
+  pageSize: optional(positiveIntegerSchema),
 });
 
 export const curationsQuerySchema = object({
-  page: optional(positiveIntegerSchema), 
-  pageSize: optional(positiveIntegerSchema), 
+  page: optional(positiveIntegerSchema),
+  pageSize: optional(positiveIntegerSchema),
   searchBy: optional(union([
     literal(searchByCuratingEnum.nickname),
     literal(searchByCuratingEnum.content),
