@@ -254,7 +254,10 @@ export const curationsQuerySchema = object({
     literal(searchByCuratingEnum.nickname),
     literal(searchByCuratingEnum.content),
   ])),
-  keyword: optional(size(string(), 1, 100)),
+  keyword: optional(union([
+    literal(''),
+    size(string(), 1, 100)
+  ])),
 });
 
 //유효성 검사 미들웨어
