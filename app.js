@@ -4,9 +4,11 @@ import * as dotenv from 'dotenv'
 import path from 'path';
 import { fileURLToPath } from 'url';
 import uploadRouter from './src/routes/uploadRoute.js';
+import tagRouter from './src/routes/tagRoute.js';
 import styleRouter from './src/routes/styleRoute.js';
 import curationRouter from './src/routes/curationRoute.js';
 import { AppError } from './src/utils/appError.js';
+
 
 dotenv.config()
 
@@ -21,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));// URL-encoded 본문 파싱 미
 
 app.use('/images', uploadRouter);//이미지 업로드 라우터 설정
 app.use('/images', express.static('uploads'));//저장된 이미지 사용을 위한 설정
+app.use('/tags', tagRouter)//태그 라우터 설정
 app.use('/styles', styleRouter); // 스타일 라우터 설정
 app.use('/curations', curationRouter); // Curation 라우터 설정
 app.use('/styles/:styleId/curations', curationRouter); // Curation 라우터를 스타일 라우터에 중첩
