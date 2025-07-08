@@ -31,9 +31,9 @@ const curationService = {
             select: { password: true },
         })
         // 비밀번호가 없거나 일치하지 않는 경우 예외 처리
-        if (!curationPassword) { throw new Error(); }
+        if (!curationPassword) { throw new NotFoundError(); }
         // 입력한 비밀번호와 해싱된 비밀번호를 비교
-        if (!checkPassword(password, curationPassword.password)) { throw new Error(); }
+        if (!checkPassword(password, curationPassword.password)) { throw new ForbiddenError(); }
       
         const curation = await prisma.curation.update({
             where: { id: curationId },
@@ -57,9 +57,9 @@ const curationService = {
             select: { password: true },
         });
         // 비밀번호가 없거나 일치하지 않는 경우 예외 처리
-        if (!curationPassword) { throw new Error(); }
+        if (!curationPassword) { throw new NotFoundError(); }
         // 입력한 비밀번호와 해싱된 비밀번호를 비교
-        if (!checkPassword(password, curationPassword.password)) { throw new Error(); }
+        if (!checkPassword(password, curationPassword.password)) { throw new ForbiddenError(); }
 
         await prisma.curation.delete({
             where: { id: curationId },
