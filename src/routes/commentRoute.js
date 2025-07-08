@@ -5,13 +5,12 @@ const commentRouter = express.Router({ mergeParams: true });
 
 commentRouter.route('/')
   // 답글 생성
-  .post(
-    commentController.createComment
-  )
+  .post(commentController.createComment)
+  
 commentRouter.route('/:commentId')
   // 답글 수정
-  .put(
-    commentController.updateComment
-  );
+  .put(commentController.updateComment)
+  // 답글 삭제
+  .delete(commentController.deleteComment);
 
 export default commentRouter;

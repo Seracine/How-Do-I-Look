@@ -30,7 +30,7 @@ const commentService = {
     },
 
     updateComment: async (commentBody) => {
-        const { commentId, content, password } = commentBody
+        const { content, password, commentId } = commentBody
         const comment = await prisma.comment.findUnique({
             where: { id: commentId },
             include: {
@@ -46,9 +46,6 @@ const commentService = {
         }
         if (comment.curation.password !== password) {
             throw new Error('Invalid password');
-        }   
-        if (!comment || comment.curation.password !== password) {
-            throw new Error('비밀번호가 일치하지 않습니다.');
         }
 
         return prisma.comment.update({
@@ -61,6 +58,36 @@ const commentService = {
                 nickname: true,
                 content: true,
             }
+        })
+    },
+
+    deleteComment: async (commentBody) => {
+        const { password, commentId } = commentBody;
+        const comment = await prisma.comment.findUnique({
+            where: { id: commentId }, include: {
+                curation: {
+                    include: {
+                        Style: true
+                    }
+                }
+            },
+        });
+
+        if (!comment) {
+            throw new Error('comment not found');
+        }
+        if (comment.curation.password !== password) {
+            throw new Error('Invalid password');
+        }
+
+        return prisma.comment.delete({
+            where: { id: commentId },
+            select: {
+                id: true,
+                nickname: true,
+                content: true,
+            }
+
         })
     }
 }

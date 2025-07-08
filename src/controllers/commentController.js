@@ -42,6 +42,29 @@ const commentControllers = {
         return res.status(400).json({ message: '잘못된 요청입니다' });
       }
     }
+  },
+
+  deleteComment: async (req, res) => {
+    const commentId = parseInt(req.params.commentId)
+    const { password } = req.body;
+
+    const commentBody = {
+      password,
+      commentId
+    }
+
+    try {
+      const comment = await commentService.deleteComment(commentBody)
+      return res.status(200).json({ "message": "답글 삭제 성공" });
+    } catch (error) {
+      if (error.message === 'comment not found') {
+        return res.status(404).json({ message: '존재하지 않습니다' });
+      } else if (error.message === 'Invalid password') {
+        return res.status(403).json({ message: '비밀번호가 틀렸습니다' });
+      } else {
+        return res.status(400).json({ message: '잘못된 요청입니다' });
+      }
+    }
   }
 }
 
