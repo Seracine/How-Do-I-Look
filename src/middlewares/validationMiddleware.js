@@ -199,18 +199,18 @@ export const curatingUpdateFormInputSchema = object({
 export const curatingDeleteFormInputSchema = object({
   password: passwordSchema,
 });
-// comment 유효성 검사
-export const commentFormInputSchema = object({
+// reply 유효성 검사
+export const replyFormInputSchema = object({
   content: contentSchema,
   password: passwordSchema,
 });
 
-export const commentUpdateFormInputSchema = object({
+export const replyUpdateFormInputSchema = object({
   content: optional(contentSchema),
   password: passwordSchema,
 });
 
-export const commentDeleteFormInputSchema = object({
+export const replyDeleteFormInputSchema = object({
   password: passwordSchema,
 });
 //쿼리 스키마 유효성 검사
@@ -254,7 +254,10 @@ export const curationsQuerySchema = object({
     literal(searchByCuratingEnum.nickname),
     literal(searchByCuratingEnum.content),
   ])),
-  keyword: optional(size(string(), 1, 100)),
+  keyword: optional(union([
+    literal(''),
+    size(string(), 1, 100)
+  ])),
 });
 
 //유효성 검사 미들웨어
