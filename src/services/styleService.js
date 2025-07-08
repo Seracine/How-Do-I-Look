@@ -198,7 +198,7 @@ const styleService = {
     },
 
     getStyleList: async (queryParams) => {
-        const { page = 1, pageSize = 12, sortBy = 'latest', searchBy, keyword = '', tag } = queryParams;
+        const { page = 1, pageSize = 12, sortBy = 'latest', searchBy, keyword = '', tag = '' } = queryParams;
 
         // orderBy 조건 정리
         let orderBy;
@@ -216,29 +216,17 @@ const styleService = {
         }
 
         // where 조건 정리
-        const conditions = []; // AND로 전부 묶어야 하므로 배열을 만들어 push
-        if (searchBy) { // searchBy가 들어오면 조건 추가
-            if (searchBy === 'tag') {
-                conditions.push({ tags: { some: { tagname: keyword } } });
-            } else {
-                conditions.push({
+        let where;
+        if (searchBy === 'tag') { // nickname | title | content | tag
+            where = { tags: { some: { tagname: keyword } } }; // 태그명은 일부가 아니라 완전히 동일해야함
+        } else {
+            where = keyword
+                ? {
                     [searchBy]: {
                         contains: keyword,
                         mode: 'insensitive',
-                    },
-                });
-            }
-        }
-        if (tag) { // 인기 태그 선택시 들어오는 값, AND로 전부 묶어야 하므로 배열에 push
-            conditions.push({ tags: { some: { tagname: tag } } });
-        }
-
-        // where 정리한 조건으로 설정
-        let where = {};
-        if (conditions.length > 1) {
-            where = { AND: conditions };
-        } else if (conditions.length === 1) {
-            where = conditions[0];
+                    }
+                } : {};
         }
 
         // 조건에 맞는 style들을 검색해서 정렬된 값 가져오기

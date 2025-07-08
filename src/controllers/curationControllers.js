@@ -4,6 +4,7 @@ import curationService from '../services/curationService.js';
 const curationControllers = {
     createCuration: async (req, res, next) => {
         const createData = req.body;
+
         const styleId = parseInt(req.params.styleId);
         try {
             const curation = await curationService.createCuration(createData, styleId);
@@ -27,15 +28,10 @@ const curationControllers = {
         } catch (error) { next(error); }
     },
     getCurationList: async (req, res, next) => {
-        const queryParams = {
-            page: parseInt(req.query?.page),
-            pageSize: parseInt(req.query?.pageSize),
-            searchBy: req.query?.searchBy,
-            keyword: req.query?.keyword,
-        }
-        const styleId = parseInt(req.params.styleId);
         try {
-            const curations = await curationService.getCurationList(styleId, queryParams);
+            const styleId = parseInt(req.params.styleId);
+            const { page = 1, pageSize = 5, searchBy = '', keyword = '' } = req.query;
+            const curations = await curationService.getCurationList(styleId, parseInt(page), parseInt(pageSize), searchBy, keyword);
             res.status(200).send(curations);
         } catch (error) { next(error); }
     },
