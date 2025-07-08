@@ -1,5 +1,6 @@
 import { prisma } from '../utils/prismaInstance.js';
 import { hashPassword, checkPassword } from '../utils/passwordHash.js';
+import { AppError, ForbiddenError, NotFoundError } from '../utils/appError.js';
 
 const curationService = {
     createCuration: async (curationBody, styleId, password) => {
@@ -21,6 +22,7 @@ const curationService = {
                 createdAt: true,
             },
         });
+        if (!curation) { throw new NotFoundError(); }
         return curation;
     },
     updateCuration: async (curationId, password, curationBody) => {
@@ -32,7 +34,7 @@ const curationService = {
         if (!curationPassword) { throw new Error('Curation not found'); }
         // 입력한 비밀번호와 해싱된 비밀번호를 비교
         if (!checkPassword(password, curationPassword.password)) { throw new Error('Invalid password'); }
-
+      
         const curation = await prisma.curation.update({
             where: { id: curationId },
             data: curationBody,
@@ -47,6 +49,7 @@ const curationService = {
                 createdAt: true,
             },
         });
+        if (!curation) { throw new NotFoundError(); }
         return curation;
     },
     deleteCuration: async (curationId, password) => {
@@ -73,7 +76,7 @@ const curationService = {
                     mode: 'insensitive',
                 }
             } : { styleId };
-        
+
         let curations = await prisma.curation.findMany({
             where,
             orderBy: { id: 'asc' },
@@ -99,6 +102,7 @@ const curationService = {
             },
         });
 
+        if (!curations) { throw new NotFoundError(); }
         curations = curations.map(curation => ({
             ...curation,
             comment: curation.comment || {},
