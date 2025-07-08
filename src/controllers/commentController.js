@@ -13,20 +13,18 @@ const commentControllers = {
     }
 
     const comment = await commentService.createComment(commentBody);
-    try {
-      if (!comment || !comment.content || !comment.id) {
-        return res.status(200).json(comment);
-      }
-    } catch (error) { next(error); };
+    return res.status(200).json(comment);
   },
 
   updateComment: async (req, res) => {
     const commentId = parseInt(req.params.commentId);
+    const curationId = parseInt(req.params.curationId, 10);
     const { content, password } = req.body;
     const commentBody = {
       content,
       password,
       commentId,
+      curationId,
     }
     const comment = await commentService.updateComment(commentBody)
     return res.status(200).json(comment);
@@ -34,15 +32,16 @@ const commentControllers = {
 
   deleteComment: async (req, res) => {
     const commentId = parseInt(req.params.commentId)
-    const { content, password } = req.body;
+    const curationId = parseInt(req.params.curationId, 10);
+    const { password } = req.body;
 
     const commentBody = {
-      content,
       password,
-      commentId
+      commentId,
+      curationId,
     }
     const comment = await commentService.deleteComment(commentBody)
-    return res.status(200).json(comment);
+    return res.status(200).json({ message: "답글 삭제 성공" });
   }
 }
 
