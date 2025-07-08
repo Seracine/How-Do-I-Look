@@ -3,11 +3,11 @@ import { hashPassword, checkPassword } from '../utils/passwordHash.js';
 import { AppError, ForbiddenError, NotFoundError } from '../utils/appError.js';
 
 const curationService = {
-    createCuration: async (curationBody, styleId, password) => {
+    createCuration: async (curationBody, styleId) => {
         const curation = await prisma.curation.create({
             data: {
                 // 비밀번호를 해싱하여 저장
-                password: hashPassword(password),
+                password: hashPassword(curationBody.password),
                 ...curationBody,
                 Style: { connect: { id: styleId } },
             },
@@ -31,9 +31,9 @@ const curationService = {
             select: { password: true },
         })
         // 비밀번호가 없거나 일치하지 않는 경우 예외 처리
-        if (!curationPassword) { throw new Error('Curation not found'); }
+        if (!curationPassword) { throw new Error(); }
         // 입력한 비밀번호와 해싱된 비밀번호를 비교
-        if (!checkPassword(password, curationPassword.password)) { throw new Error('Invalid password'); }
+        if (!checkPassword(password, curationPassword.password)) { throw new Error(); }
       
         const curation = await prisma.curation.update({
             where: { id: curationId },
@@ -49,7 +49,6 @@ const curationService = {
                 createdAt: true,
             },
         });
-        if (!curation) { throw new NotFoundError(); }
         return curation;
     },
     deleteCuration: async (curationId, password) => {
@@ -58,15 +57,16 @@ const curationService = {
             select: { password: true },
         });
         // 비밀번호가 없거나 일치하지 않는 경우 예외 처리
-        if (!curationPassword) { throw new Error('Curation not found'); }
+        if (!curationPassword) { throw new Error(); }
         // 입력한 비밀번호와 해싱된 비밀번호를 비교
-        if (!checkPassword(password, curationPassword.password)) { throw new Error('Invalid password'); }
+        if (!checkPassword(password, curationPassword.password)) { throw new Error(); }
 
         await prisma.curation.delete({
             where: { id: curationId },
         });
     },
-    getCurationList: async (styleId, page, pageSize, searchBy, keyword) => {
+    getCurationList: async (styleId, queryParams) => {
+        const { page = 1, pageSize = 5, searchBy = '', keyword = '' } = queryParams;
         const skip = (page - 1) * pageSize;
         const where = keyword
             ? {
