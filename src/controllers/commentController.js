@@ -23,7 +23,7 @@ const commentControllers = {
   updateComment: async (req, res) => {
     const commentId = parseInt(req.params.commentId);
     const { content, password } = req.body;
-
+    
     const commentBody = {
       content,
       password,

@@ -1,4 +1,5 @@
 import { prisma } from '../utils/prismaInstance.js';
+import { hashPassword, checkPassword } from '../utils/passwordHash.js';
 
 const commentService = {
     createComment: async (commentBody) => {
@@ -44,9 +45,9 @@ const commentService = {
         if (!comment) {
             throw new Error('comment not found');
         }
-        if (comment.curation.Style.password !== password) {
-            throw new Error('Invalid password');
-        }
+
+        const isMatch = checkPassword(password, comment.curation.Style.password);
+        if (!isMatch) throw new Error('Invalid password');
 
         return prisma.comment.update({
             where: { id: commentId },
@@ -64,7 +65,7 @@ const commentService = {
     deleteComment: async (commentBody) => {
         const { password, commentId } = commentBody;
         const comment = await prisma.comment.findUnique({
-            where: { id: commentId }, 
+            where: { id: commentId },
             include: {
                 curation: {
                     include: {
