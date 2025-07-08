@@ -3,10 +3,10 @@ import curationService from '../services/curationService.js';
 
 const curationControllers = {
     createCuration: async (req, res) => {
-        const createData = req.body;
+        const { password, ...createData } = req.body;
 
         const styleId = parseInt(req.params.styleId);
-        const curation = await curationService.createCuration(createData, styleId);
+        const curation = await curationService.createCuration(createData, styleId, password);
         res.status(200).json(curation);
     },
     updateCuration: async (req, res) => {
@@ -44,7 +44,7 @@ const curationControllers = {
     getCurationList: async (req, res) => {
         try {
             const styleId = parseInt(req.params.styleId);
-            const { page = 1, pageSize = 5, searchBy='', keyword = '' } = req.query;
+            const { page = 1, pageSize = 5, searchBy = '', keyword = '' } = req.query;
             const curations = await curationService.getCurationList(styleId, parseInt(page), parseInt(pageSize), searchBy, keyword);
             res.status(200).send(curations);
         } catch (error) {
