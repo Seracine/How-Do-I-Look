@@ -1,5 +1,5 @@
 import { array, literal, number, object, optional, refine, string, union, size, } from 'superstruct';
-//import { ValidationError } from '../utils/appError.js'
+import { ValidationError } from '../utils/appError.js'
 
 export const handleValidationErrors = (res, errors) => {
 
@@ -265,7 +265,7 @@ export const validateBody = (schema) => (req, res, next) => {
   } catch (error) {
     if (error instanceof Error && 'failures' in error) {
       console.log(error.message)
-      //throw new ValidationError
+      throw new ValidationError
     }
     next(error);
   }
@@ -288,7 +288,7 @@ export const validateQuery = (schema) => (req, res, next) => {
   } catch (error) {
     if (error instanceof Error && 'failures' in error) {
       console.log(error.message)
-      //throw new ValidationError
+      throw new ValidationError
     }
     next(error);
   }
@@ -317,7 +317,7 @@ export const validateParams = (paramKeys) => (req, res, next) => {
   } catch (error) {
     if (error instanceof Error && 'failures' in error) {
       console.log(error.message)
-      //throw new ValidationError
+      throw new ValidationError
     }
     next(error);
   }
