@@ -22,7 +22,7 @@ app.use(cors()); //CORS 설정
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));// URL-encoded 본문 파싱 미들웨어 (폼 데이터 받을 때 필요)
 
-app.use('/images', uploadRouter);//이미지 업로드 라우터 설정
+app.use('/api/upload', uploadRouter);//이미지 업로드 라우터 설정
 app.use('/images', express.static(uploadsDirPath));//저장된 이미지 사용을 위한 설정
 app.use('/tags', tagRouter)//태그 라우터 설정
 app.use('/styles', styleRouter); // 스타일 라우터 설정
