@@ -20,6 +20,7 @@ const __dirname = path.dirname(__filename);
 const uploadsDirPath = path.join(__dirname, 'uploads');
 
 app.use(cors()); //CORS 설정
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));// URL-encoded 본문 파싱 미들웨어 (폼 데이터 받을 때 필요)
 
