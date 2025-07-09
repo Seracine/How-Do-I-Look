@@ -3,8 +3,8 @@ import { checkPassword } from '../utils/passwordHash.js';
 import { ValidationError, ForbiddenError, NotFoundError } from '../utils/appError.js';
 
 class CommentService {
-    createComment = async (commentBody) => {
-        const { content, password, curationId } = commentBody
+    createComment = async (curationId,commentBody) => {
+        const { content, password } = commentBody
         const curation = await prisma.curation.findUnique({
             where: { id: curationId },
             select: {

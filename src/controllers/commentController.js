@@ -9,10 +9,9 @@ class CommentControllers {
     const commentBody = {
       content,
       password,
-      curationId,
     }
 
-    const comment = await CommentService.createComment(commentBody);
+    const comment = await CommentService.createComment(curationId, commentBody);
     res.status(200).json(comment);
   };
 
