@@ -119,7 +119,7 @@ class CurationService {
             ...curation,
             comment: curation.comment || {},
         }));
-        const totalCount = prisma.curation.count({ where });
+        const totalCount = await prisma.curation.count({ where });
         const totalPages = Math.ceil(totalCount / pageSize);
 
         const curationList = {
