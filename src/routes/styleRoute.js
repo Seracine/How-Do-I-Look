@@ -1,5 +1,5 @@
 import express from 'express';
-import styleController from '../controllers/styleController.js';
+import StyleController from '../controllers/styleController.js';
 import {
     validateBody,
     validateQuery,
@@ -13,23 +13,23 @@ import {
 const styleRouter = express.Router();
 
 styleRouter.route('/')
-    .post(validateBody(styleFormInputSchema), styleController.postStyle)
-    .get(validateQuery(stylesQuerySchema), styleController.getStyleList);
+    .post(validateBody(styleFormInputSchema), StyleController.postStyle)
+    .get(validateQuery(stylesQuerySchema), StyleController.getStyleList);
 
 styleRouter.route('/:styleId')
     .put(
         validateParams(['styleId']),
         validateBody(styleUpdateFormInputSchema),
-        styleController.putStyle
+        StyleController.putStyle
     )
     .delete(
         validateParams(['styleId']),
         validateBody(styleDeleteFormInputSchema),
-        styleController.deleteStyle
+        StyleController.deleteStyle
     )
     .get(
         validateParams(['styleId']),
-        styleController.getStyle
+        StyleController.getStyle
     );
 
 export default styleRouter;

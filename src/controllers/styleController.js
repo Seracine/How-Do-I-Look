@@ -1,5 +1,5 @@
-import styleService from '../services/styleService.js'
-import { Prisma } from '@prisma/client'; // errorHandler에서 리팩토링 할때 제거
+import StyleService from '../services/styleService.js'
+
 class StyleController{
     postStyle = async (req, res) => {
         const styleBody = {
@@ -11,7 +11,7 @@ class StyleController{
             tags: req.body.tags,
             imageUrls: req.body.imageUrls,
         }
-        const style = await styleService.createStyle(styleBody);
+        const style = await StyleService.createStyle(styleBody);
         res.status(201).json(style);
     };
 
@@ -26,7 +26,7 @@ class StyleController{
             imageUrls: req.body.imageUrls,
         }
         const styleId = parseInt(req.params.styleId);
-        const style = await styleService.updateStyle(styleId, styleBody);
+        const style = await StyleService.updateStyle(styleId, styleBody);
         res.status(200).json(style);
     };
 
@@ -36,7 +36,7 @@ class StyleController{
         }
         const styleId = parseInt(req.params.styleId);
 
-        const style = await styleService.deleteStyle(styleId, styleBody);
+        const style = await StyleService.deleteStyle(styleId, styleBody);
         res.status(200).json({ message: "스타일 삭제 성공" });
     };
 
@@ -49,14 +49,14 @@ class StyleController{
             keyword: req.query?.keyword,
             tag: req.query.tag,
         }
-        const styleList = await styleService.getStyleList(queryParams);
+        const styleList = await StyleService.getStyleList(queryParams);
         res.status(200).json(styleList);
     };
 
     getStyle = async (req, res) => {
         const styleId = parseInt(req.params.styleId);
 
-        const style = await styleService.getStyle(styleId);
+        const style = await StyleService.getStyle(styleId);
         res.status(200).json(style);
 
     };
