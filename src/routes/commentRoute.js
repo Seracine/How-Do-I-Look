@@ -6,7 +6,7 @@ import {
   commentUpdateFormInputSchema,
   commentDeleteFormInputSchema
 } from '../middlewares/validationMiddleware.js';
-import commentController from '../controllers/commentController.js';
+import CommentController from '../controllers/commentController.js';
 
 const commentRouter = express.Router({ mergeParams: true });
 
@@ -14,16 +14,16 @@ commentRouter.route('/')
   // 답글 생성
   .post(validateBody(commentFormInputSchema),
     validateParams(['curationId']),
-    commentController.createComment);
+    CommentController.createComment);
 
 commentRouter.route('/:commentId')
   // 답글 수정
   .put(validateBody(commentUpdateFormInputSchema),
     validateParams(['commentId']),
-    commentController.updateComment)
+    CommentController.updateComment)
   // 답글 삭제
   .delete(validateBody(commentDeleteFormInputSchema),
     validateParams(['commentId']),
-    commentController.deleteComment);
+    CommentController.deleteComment);
 
 export default commentRouter;

@@ -2,7 +2,7 @@ import { prisma } from '../utils/prismaInstance.js';
 import { checkPassword } from '../utils/passwordHash.js';
 import { ValidationError, ForbiddenError, NotFoundError } from '../utils/appError.js';
 
-class commentService{
+class CommentService{
     createComment = async (commentBody) => {
         const { content, password, curationId } = commentBody
         const curation = await prisma.curation.findUnique({
@@ -94,4 +94,4 @@ class commentService{
     };
 }
 
-export default new commentService();
+export default new CommentService();

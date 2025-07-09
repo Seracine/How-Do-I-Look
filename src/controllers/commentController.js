@@ -1,6 +1,6 @@
-import commentService from '../services/commentService.js'
+import CommentService from '../services/commentService.js'
 
-class commentControllers{
+class CommentControllers{
   createComment = async (req, res) => {
     const curationId = parseInt(req.params.curationId);
 
@@ -12,7 +12,7 @@ class commentControllers{
       curationId,
     }
 
-    const comment = await commentService.createComment(commentBody);
+    const comment = await CommentService.createComment(commentBody);
     return res.status(200).json(comment);
   };
 
@@ -26,7 +26,7 @@ class commentControllers{
       commentId,
       curationId,
     }
-    const comment = await commentService.updateComment(commentBody)
+    const comment = await CommentService.updateComment(commentBody)
     return res.status(200).json(comment);
   };
 
@@ -40,9 +40,9 @@ class commentControllers{
       commentId,
       curationId,
     }
-    const comment = await commentService.deleteComment(commentBody)
+    const comment = await CommentService.deleteComment(commentBody)
     return res.status(200).json({ message: "답글 삭제 성공" });
   };
 }
 
-export default new commentControllers();
+export default new CommentControllers();
