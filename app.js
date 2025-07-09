@@ -32,6 +32,8 @@ app.use('/styles', styleRouter); // 스타일 라우터 설정
 app.use('/curations', curationRouter); // Curation 라우터 설정
 app.use('/styles/:styleId/curations', curationRouter); // Curation 라우터를 스타일 라우터에 중첩
 app.use('/ranking', rankingRouter) // Ranking 라우터 설정
+app.use('/curations/:curationId/comments', commentRouter); // 답글 라우터 설정
+app.use('/comments', commentRouter); // 답글 중첩
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -41,7 +43,6 @@ app.use((err, req, res, next) => {
     return res.status(404).json({ message: "존재하지 않습니다" });
   }
 });
-app.use('/curations/:curationId/comments', commentRouter); // 답글 라우터 설정
 
 
 app.listen(process.env.PORT || 3000, () => console.log("Server Starting..."));

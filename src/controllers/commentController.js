@@ -1,7 +1,7 @@
-import commentService from '../services/commentService.js'
+import CommentService from '../services/commentService.js'
 
-const commentControllers = {
-  createComment: async (req, res, next) => {
+class CommentControllers{
+  createComment = async (req, res) => {
     const curationId = parseInt(req.params.curationId);
 
     const { content, password } = req.body;
@@ -12,15 +12,11 @@ const commentControllers = {
       curationId,
     }
 
-    const comment = await commentService.createComment(commentBody);
-    try {
-      if (!comment || !comment.content || !comment.id) {
-        return res.status(200).json(comment);
-      }
-    } catch (error) { next(error); };
-  },
+    const comment = await CommentService.createComment(commentBody);
+    res.status(200).json(comment);
+  };
 
-  updateComment: async (req, res) => {
+  updateComment = async (req, res) => {
     const commentId = parseInt(req.params.commentId);
     const { content, password } = req.body;
     const commentBody = {
@@ -28,22 +24,21 @@ const commentControllers = {
       password,
       commentId,
     }
-    const comment = await commentService.updateComment(commentBody)
-    return res.status(200).json(comment);
-  },
+    const comment = await CommentService.updateComment(commentBody)
+    res.status(200).json(comment);
+  };
 
-  deleteComment: async (req, res) => {
+  deleteComment = async (req, res) => {
     const commentId = parseInt(req.params.commentId)
-    const { content, password } = req.body;
+    const { password } = req.body;
 
     const commentBody = {
-      content,
       password,
-      commentId
+      commentId,
     }
-    const comment = await commentService.deleteComment(commentBody)
-    return res.status(200).json(comment);
-  }
+    await CommentService.deleteComment(commentBody)
+    res.status(200).json({ message: "답글 삭제 성공" });
+  };
 }
 
-export default commentControllers;
+export default new CommentControllers();
