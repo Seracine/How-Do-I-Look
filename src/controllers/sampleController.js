@@ -1,8 +1,8 @@
 import sampleService from '../services/sampleService.js'
 
-const sampleController = {
+class SampleController{
     // post 메소드를 예시로 들겠습니다 
-    postSample: async (req, res) => {
+    postSample = async (req, res) => {
         /* 
           (선택) 유효성 검사를 실시합니다
         */
@@ -17,7 +17,7 @@ const sampleController = {
           (선택) service함수에서 반환값을 가공하여 response를 돌려줍니다
         */
         res.status(201).json(sample)
-    },
+    };
 }
 
-export default sampleController
+export default new SampleController(); // default import로 객체처럼 사용하기 위해 인스턴스를 만들어 export 합니다.
