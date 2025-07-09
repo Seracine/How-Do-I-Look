@@ -7,14 +7,14 @@ class CommentService {
         const { content, password, curationId } = commentBody
         const curation = await prisma.curation.findUnique({
             where: { id: curationId },
-            include: {
+            select: {
+                comment: true,
                 Style: {
                     select: {
                         password: true,
                         nickname: true,
                     }
-                },
-                comment: true,
+                }
             },
         });
         if (curation.comment) { throw new ValidationError(); }
@@ -37,22 +37,22 @@ class CommentService {
         return comment;
     };
 
-    updateComment = async (commentBody) => {
-        const { content, password, commentId, curationId } = commentBody
+    updateComment = async (curationId, commentBody) => {
+        const { content, password, commentId } = commentBody
         if (curationId) { throw new ValidationError() };
         const comment = await prisma.comment.findUnique({
             where: {
                 id: commentId,
             },
-            include: {
+            select: {
                 curation: {
-                    include: {
+                    select: {
                         Style: {
                             select: {
                                 password: true,
-                                nickname: true,
+                                nickname: true
                             }
-                        },
+                        }
                     }
                 }
             },
@@ -75,21 +75,21 @@ class CommentService {
         })
     };
 
-    deleteComment = async (commentBody) => {
-        const { password, commentId, curationId } = commentBody;
+    deleteComment = async (curationId, commentBody) => {
+        const { password, commentId } = commentBody;
         if (curationId) { throw new ValidationError() };
         const comment = await prisma.comment.findUnique({
             where: {
                 id: commentId,
             },
-            include: {
+            select: {
                 curation: {
-                    include: {
+                    select: {
                         Style: {
                             select: {
                                 password: true,
                             }
-                        },
+                        }
                     }
                 }
             },

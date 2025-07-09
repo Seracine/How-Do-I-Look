@@ -24,9 +24,8 @@ class CommentControllers {
       content,
       password,
       commentId,
-      curationId,
     }
-    const comment = await CommentService.updateComment(commentBody)
+    const comment = await CommentService.updateComment(curationId, commentBody)
     res.status(200).json(comment);
   };
 
@@ -38,9 +37,8 @@ class CommentControllers {
     const commentBody = {
       password,
       commentId,
-      curationId,
     }
-    await CommentService.deleteComment(commentBody)
+    await CommentService.deleteComment(curationId, commentBody)
     res.status(200).json({ message: "답글 삭제 성공" });
   };
 }
