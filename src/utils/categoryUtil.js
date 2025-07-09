@@ -17,4 +17,8 @@ const convertCategoriesForDB = (categories) => {
         })
 }
 
-export { convertCategoriesForRes, convertCategoriesForDB }
+const extractTagnameList = (tags) => {
+  return tags.map(({ tagname }) => tagname);
+}
+
+export { convertCategoriesForRes, convertCategoriesForDB, extractTagnameList }
