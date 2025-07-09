@@ -13,35 +13,31 @@ class CommentControllers{
     }
 
     const comment = await CommentService.createComment(commentBody);
-    return res.status(200).json(comment);
+    res.status(200).json(comment);
   };
 
   updateComment = async (req, res) => {
     const commentId = parseInt(req.params.commentId);
-    const curationId = parseInt(req.params.curationId, 10);
     const { content, password } = req.body;
     const commentBody = {
       content,
       password,
       commentId,
-      curationId,
     }
     const comment = await CommentService.updateComment(commentBody)
-    return res.status(200).json(comment);
+    res.status(200).json(comment);
   };
 
   deleteComment = async (req, res) => {
     const commentId = parseInt(req.params.commentId)
-    const curationId = parseInt(req.params.curationId, 10);
     const { password } = req.body;
 
     const commentBody = {
       password,
       commentId,
-      curationId,
     }
-    const comment = await CommentService.deleteComment(commentBody)
-    return res.status(200).json({ message: "답글 삭제 성공" });
+    await CommentService.deleteComment(commentBody)
+    res.status(200).json({ message: "답글 삭제 성공" });
   };
 }
 

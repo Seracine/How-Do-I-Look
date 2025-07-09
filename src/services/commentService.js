@@ -9,9 +9,10 @@ class CommentService{
             where: { id: curationId },
             include: {
                 Style: true,
+                comment: true,
             },
         });
-
+        if(curation.comment) { throw new ValidationError(); }
         const isMatch = checkPassword(password, curation.Style.password);
         if (!isMatch) { throw new ValidationError(); }
 
@@ -26,18 +27,16 @@ class CommentService{
                 nickname: true,
                 content: true,
                 createdAt: true,
-
             }
         });
         return comment;
     };
 
     updateComment = async (commentBody) => {
-        const { content, password, commentId, curationId } = commentBody
-        const comment = await prisma.comment.findFirst({
-            where: { 
+        const { content, password, commentId } = commentBody
+        const comment = await prisma.comment.findUnique({
+            where: {
                 id: commentId,
-                curationId: curationId,
              },
             include: {
                 curation: {
@@ -48,7 +47,6 @@ class CommentService{
             },
         });
         if (!comment) { throw new NotFoundError(); }
-
         const isMatch = checkPassword(password, comment.curation.Style.password);
         if (!isMatch) { throw new ForbiddenError(); }
 
@@ -67,11 +65,10 @@ class CommentService{
     };
 
     deleteComment = async (commentBody) => {
-        const { password, commentId, curationId } = commentBody;
-        const comment = await prisma.comment.findFirst({
+        const { password, commentId } = commentBody;
+        const comment = await prisma.comment.findUnique({
             where: { 
                 id: commentId,
-                curationId: curationId,
              },
             include: {
                 curation: {
@@ -83,13 +80,11 @@ class CommentService{
         });
 
         if (!comment) { throw new NotFoundError(); }
-
         const isMatch = checkPassword(password, comment.curation.Style.password);
         if (!isMatch) { throw new ForbiddenError(); }
 
-        return prisma.comment.delete({
+        prisma.comment.delete({
             where: { id: commentId },
-
         })
     };
 }
