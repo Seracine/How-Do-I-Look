@@ -36,12 +36,12 @@ app.use('/curations/:curationId/comments', commentRouter); // 답글 라우터 �
 app.use('/comments', commentRouter); // 답글 중첩
 
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  if (err instanceof AppError) {
-    return res.status(err.statusCode).json({ message: err.message });
-  } else if (err.code === 'P2025') {
-    return res.status(404).json({ message: "존재하지 않습니다" });
-  }
+    console.error(err.stack);
+    if (err instanceof AppError) {
+        return res.status(err.statusCode).json({ message: err.message });
+    } else if (err.code === 'P2025') {
+        return res.status(404).json({ message: "존재하지 않습니다" });
+    }
 });
 
 

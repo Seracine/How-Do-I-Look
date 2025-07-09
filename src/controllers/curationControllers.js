@@ -1,44 +1,52 @@
-import { parse } from 'dotenv';
-import curationService from '../services/curationService.js';
+import CurationService from '../services/curationService.js';
 
-const curationControllers = {
-    createCuration: async (req, res, next) => {
-        const createData = req.body;
+class CurationController {
+    createCuration = async (req, res) => {
         const styleId = parseInt(req.params.styleId);
-        try {
-            const curation = await curationService.createCuration(createData, styleId);
-            res.status(200).json(curation);
-        } catch (error) { next(error); }
-    },
-    updateCuration: async (req, res, next) => {
-        const { password, ...updateData } = req.body;
+        const curationBody = {
+            ...req.body,
+        }
+
+        const curation = await CurationService.createCuration(styleId, curationBody);
+        res.status(200).json(curation);
+    };
+
+    updateCuration = async (req, res) => {
         const curationId = parseInt(req.params.curationId);
-        try {
-            const curation = await curationService.updateCuration(curationId, password, updateData);
-            res.status(200).send(curation);
-        } catch (error) { next(error); }
-    },
-    deleteCuration: async (req, res, next) => {
+        const styleId = req.params.styleId;
+        const curationBody = {
+            ...req.body,
+        }
+
+        const curation = await CurationService.updateCuration(curationId, styleId, curationBody);
+        res.status(200).send(curation);
+    };
+
+    deleteCuration = async (req, res) => {
         const curationId = parseInt(req.params.curationId);
-        const password = req.body.password;
-        try {
-            await curationService.deleteCuration(curationId, password);
-            res.status(200).send({ message: '큐레이팅 삭제 성공' });
-        } catch (error) { next(error); }
-    },
-    getCurationList: async (req, res, next) => {
+        const styleId = req.params.styleId;
+        const curationBody = {
+            password: req.body.password,
+        }
+
+        await CurationService.deleteCuration(curationId, styleId, curationBody);
+        res.status(200).send({ message: '큐레이팅 삭제 성공' });
+    };
+
+    getCurationList = async (req, res) => {
         const queryParams = {
-            page: parseInt(req.query?.page),
-            pageSize: parseInt(req.query?.pageSize),
+            page: req.query?.page ? parseInt(req.query?.page) : undefined,
+            pageSize: req.query?.pageSize ? parseInt(req.query?.pageSize) : undefined,
             searchBy: req.query?.searchBy,
             keyword: req.query?.keyword,
         }
+        console.log(queryParams);
         const styleId = parseInt(req.params.styleId);
-        try {
-            const curations = await curationService.getCurationList(styleId, queryParams);
-            res.status(200).send(curations);
-        } catch (error) { next(error); }
-    },
-};
 
-export default curationControllers;
+        const curations = await CurationService.getCurationList(styleId, queryParams);
+        res.status(200).send(curations);
+    };
+}
+
+
+export default new CurationController();
