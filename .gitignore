@@ -11,3 +11,9 @@ node_modules
 
 #http files
 /https
+
+#DS_Store
+.DS_Store
+._.DS_Store
+**/.DS_Store
+**/._.DS_Store
