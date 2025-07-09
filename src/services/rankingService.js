@@ -1,8 +1,8 @@
 import { prisma } from '../utils/prismaInstance.js'
 import { convertCategoriesForRes } from '../utils/categoryUtil.js'
 
-const rankingService = {
-    getRankedStyleList: async (queryParams) => { // 예시 페이지를 보니 큐레이션이 1개 이상 있을때에만 랭킹에 올라가도록 되어있음
+class RankingService{
+    getRankedStyleList = async (queryParams) => { // 예시 페이지를 보니 큐레이션이 1개 이상 있을때에만 랭킹에 올라가도록 되어있음
         const { page = 1, pageSize = 10, rankBy = 'total' } = queryParams;
         // rankBy는 total | trendy | personality | practicality, costEffectiveness
         const validRankBy = ['trendy', 'personality', 'practicality', 'costEffectiveness', 'total'];        
@@ -97,7 +97,7 @@ const rankingService = {
             totalItemCount,
             data,
         };
-    }, 
-};
+    };
+}
 
-export default rankingService;
+export default new RankingService();
