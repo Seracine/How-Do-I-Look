@@ -1,8 +1,8 @@
 import uploadService from "../services/uploadService.js";
 import { ValidationError } from "../utils/appError.js"
 
-const uploadCotroller = {
-  postImage: async (req, res, next) => {
+class UploadCotroller {
+  postImage = async (req, res, next) => {
     try {
       if (!req.file) {
         throw new ValidationError()
@@ -13,7 +13,7 @@ const uploadCotroller = {
     } catch (error) {
       next(error);
     };
-  },
+  };
 };
 
-export default uploadCotroller;
+export default UploadCotroller;
