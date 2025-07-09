@@ -37,11 +37,18 @@ app.use('/comments', commentRouter); // 답글 중첩
 
 app.use((err, req, res, next) => {
     console.error(err.stack);
+    let statusCode = 500;
+    let message = "알수 없는 오류 발생";
+
     if (err instanceof AppError) {
-        return res.status(err.statusCode).json({ message: err.message });
+        statusCode = err.statusCode;
+        message = err.message
     } else if (err.code === 'P2025') {
-        return res.status(404).json({ message: "존재하지 않습니다" });
+        statusCode = 404;
+        message = "존재하지 않습니다";
     }
+
+    return res.status(statusCode).json({ message });
 });
 
 
