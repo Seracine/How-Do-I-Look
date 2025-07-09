@@ -2,19 +2,24 @@ import { prisma } from '../utils/prismaInstance.js';
 import { checkPassword } from '../utils/passwordHash.js';
 import { ValidationError, ForbiddenError, NotFoundError } from '../utils/appError.js';
 
-class CommentService{
-    createComment = async (commentBody) => {
-        const { content, password, curationId } = commentBody
+class CommentService {
+    createComment = async (curationId,commentBody) => {
+        const { content, password } = commentBody
         const curation = await prisma.curation.findUnique({
             where: { id: curationId },
-            include: {
-                Style: true,
+            select: {
                 comment: true,
+                Style: {
+                    select: {
+                        password: true,
+                        nickname: true,
+                    }
+                }
             },
         });
-        if(curation.comment) { throw new ValidationError(); }
+        if (curation.comment) { throw new ValidationError(); }
         const isMatch = checkPassword(password, curation.Style.password);
-        if (!isMatch) { throw new ValidationError(); }
+        if (!isMatch) { throw new ForbiddenError(); }
 
         const comment = await prisma.comment.create({
             data: {
@@ -32,16 +37,22 @@ class CommentService{
         return comment;
     };
 
-    updateComment = async (commentBody) => {
+    updateComment = async (curationId, commentBody) => {
         const { content, password, commentId } = commentBody
+        if (curationId) { throw new ValidationError() };
         const comment = await prisma.comment.findUnique({
             where: {
                 id: commentId,
-             },
-            include: {
+            },
+            select: {
                 curation: {
-                    include: {
-                        Style: true,
+                    select: {
+                        Style: {
+                            select: {
+                                password: true,
+                                nickname: true
+                            }
+                        }
                     }
                 }
             },
@@ -64,16 +75,21 @@ class CommentService{
         })
     };
 
-    deleteComment = async (commentBody) => {
+    deleteComment = async (curationId, commentBody) => {
         const { password, commentId } = commentBody;
+        if (curationId) { throw new ValidationError() };
         const comment = await prisma.comment.findUnique({
-            where: { 
+            where: {
                 id: commentId,
-             },
-            include: {
+            },
+            select: {
                 curation: {
-                    include: {
-                        Style: true,
+                    select: {
+                        Style: {
+                            select: {
+                                password: true,
+                            }
+                        }
                     }
                 }
             },
@@ -83,7 +99,7 @@ class CommentService{
         const isMatch = checkPassword(password, comment.curation.Style.password);
         if (!isMatch) { throw new ForbiddenError(); }
 
-        prisma.comment.delete({
+        await prisma.comment.delete({
             where: { id: commentId },
         })
     };
