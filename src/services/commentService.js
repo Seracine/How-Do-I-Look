@@ -2,8 +2,8 @@ import { prisma } from '../utils/prismaInstance.js';
 import { checkPassword } from '../utils/passwordHash.js';
 import { ValidationError, ForbiddenError, NotFoundError } from '../utils/appError.js';
 
-const commentService = {
-    createComment: async (commentBody) => {
+class commentService{
+    createComment = async (commentBody) => {
         const { content, password, curationId } = commentBody
         const curation = await prisma.curation.findUnique({
             where: { id: curationId },
@@ -30,9 +30,9 @@ const commentService = {
             }
         });
         return comment;
-    },
+    };
 
-    updateComment: async (commentBody) => {
+    updateComment = async (commentBody) => {
         const { content, password, commentId, curationId } = commentBody
         const comment = await prisma.comment.findFirst({
             where: { 
@@ -64,9 +64,9 @@ const commentService = {
                 createdAt: true,
             }
         })
-    },
+    };
 
-    deleteComment: async (commentBody) => {
+    deleteComment = async (commentBody) => {
         const { password, commentId, curationId } = commentBody;
         const comment = await prisma.comment.findFirst({
             where: { 
@@ -91,7 +91,7 @@ const commentService = {
             where: { id: commentId },
 
         })
-    }
+    };
 }
 
-export default commentService
+export default new commentService();
