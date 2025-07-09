@@ -61,7 +61,7 @@ class CurationService {
         return curation;
     };
 
-    deleteCuration = async (curationId, curationBody) => {
+    deleteCuration = async (curationId, styleId, curationBody) => {
         if (styleId) { throw new ValidationError(); }
         const password = curationBody.password;
         const curationPassword = await prisma.curation.findUnique({
