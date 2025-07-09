@@ -16,4 +16,4 @@ class UploadCotroller {
   };
 };
 
-export default UploadCotroller;
+export default new UploadCotroller();

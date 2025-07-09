@@ -8,4 +8,4 @@ class UploadService {
   };
 };
 
-export default UploadService;
+export default new UploadService();
