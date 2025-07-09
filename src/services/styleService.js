@@ -1,9 +1,10 @@
 import { prisma } from '../utils/prismaInstance.js'
 import { convertCategoriesForRes, convertCategoriesForDB } from '../utils/categoryUtil.js'
 import { hashPassword, checkPassword } from '../utils/passwordHash.js';
+import { ForbiddenError, NotFoundError } from '../utils/appError.js';
 
-const styleService = {
-    createStyle: async (styleBody) => {
+class StyleService{
+    createStyle = async (styleBody) => {
         const { categories: categoriesReq, tags: tagNames, password, ...styleField } = styleBody;
         const categories = convertCategoriesForDB(categoriesReq);
 
@@ -59,9 +60,9 @@ const styleService = {
             ...style,
             tags: style.tags.map(({ tagname }) => tagname),
         };
-    },
+    };
 
-    updateStyle: async (styleId, styleBody) => { // 현재 로직대로면 tag가 0개인 경우에도 테이블에 남아있게 됨. 남겨도 될지는 고민 - 추후에 같은 이름의 태그가 들어오면 해당 레코드를 사용하면 되므로
+    updateStyle = async (styleId, styleBody) => { // 현재 로직대로면 tag가 0개인 경우에도 테이블에 남아있게 됨. 남겨도 될지는 고민 - 추후에 같은 이름의 태그가 들어오면 해당 레코드를 사용하면 되므로
         const oldStyle = await prisma.style.findUnique({
             where: { id: styleId },
             select: {
@@ -70,9 +71,9 @@ const styleService = {
             },
         })
         if (!oldStyle)  // 여기서 못찾으면 컨트롤러에서 에러 처리 - 추후 에러 코드를 던지는 식으로 변경
-            throw new Error("E404");
+            throw new NotFoundError();
         if (!checkPassword(styleBody.password, oldStyle.password)) { // 비밀번호가 맞지 않을 경우 에러, 해쉬 처리후 비교 필요
-            throw new Error("E403");
+            throw new ForbiddenError();
         }
 
         await prisma.category.deleteMany({ // 연결된 카테고리들 먼저 제거
@@ -155,9 +156,9 @@ const styleService = {
             ...style,
             tags: style.tags.map(({ tagname }) => tagname),
         };
-    },
+    };
 
-    deleteStyle: async (styleId, styleBody) => { // 현재 로직대로면 tag가 0개인 경우에도 테이블에 남아있게 됨. 남겨도 될지는 고민 - 추후에 같은 이름의 태그가 들어오면 해당 레코드를 사용하면 되므로
+    deleteStyle = async (styleId, styleBody) => { // 현재 로직대로면 tag가 0개인 경우에도 테이블에 남아있게 됨. 남겨도 될지는 고민 - 추후에 같은 이름의 태그가 들어오면 해당 레코드를 사용하면 되므로
         const Style = await prisma.style.findUnique({ // 여기서 못찾으면 컨트롤러에서 에러 처리
             where: { id: styleId },
             select: { //category랑 tags는 응답 형식에 맞추기 위해 별도로 추가, curationCount도 findmany메서드 등을 통해 개수 확인 후 추가
@@ -166,9 +167,9 @@ const styleService = {
             },
         })
         if (!Style)
-            throw new Error("E404");
+            throw new NotFoundError();
         if (!checkPassword(styleBody.password, Style.password)) { // 비밀번호가 맞지 않을 경우 에러, 해쉬 처리후 비교 필요
-            throw new Error("E403");
+            throw new ForbiddenError();
         }
 
         await prisma.style.update({ // 태그 중간 테이블 연결해제
@@ -195,9 +196,9 @@ const styleService = {
         await prisma.style.delete({ // 스타일제거, category는 cascade로 같이 지워짐
             where: { id: styleId },
         })
-    },
+    };
 
-    getStyleList: async (queryParams) => {
+    getStyleList = async (queryParams) => {
         const { page = 1, pageSize = 12, sortBy = 'latest', searchBy, keyword = '', tag } = queryParams;
 
         // orderBy 조건 정리
@@ -289,9 +290,9 @@ const styleService = {
         }
 
         return resStyleList;
-    },
+    };
 
-    getStyle: async (styleId) => {
+    getStyle = async (styleId) => {
         const style = await prisma.style.update({ // 있는지 찾고, viewcount1 증가, 없는 경우 P2025코드로 에러 던짐
             where: { id: styleId },
             select: { //category, tags, curationCount는 응답 형식에 맞추기 위해 별도 과정 추가
@@ -325,7 +326,7 @@ const styleService = {
             ...style,
             tags: style.tags.map(({ tagname }) => tagname),
         };
-    },
+    };
 }
 
-export default styleService;
+export default new StyleService();
