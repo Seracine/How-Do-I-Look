@@ -1,5 +1,5 @@
 import { prisma } from '../utils/prismaInstance.js'
-import { convertCategoriesForRes, convertCategoriesForDB } from '../utils/categoryUtil.js'
+import { convertCategoriesForRes, convertCategoriesForDB, extractTagnameList } from '../utils/categoryUtil.js'
 import { hashPassword, checkPassword } from '../utils/passwordHash.js';
 import { ForbiddenError, NotFoundError } from '../utils/appError.js';
 
@@ -58,7 +58,7 @@ class StyleService{
 
         return { // tagname만 꺼내와서 배열로 추가 후 리턴
             ...style,
-            tags: style.tags.map(({ tagname }) => tagname),
+            tags: extractTagnameList(style.tags),
         };
     };
 
@@ -154,7 +154,7 @@ class StyleService{
 
         return { // tagname만 꺼내와서 배열로 추가 후 리턴
             ...style,
-            tags: style.tags.map(({ tagname }) => tagname),
+            tags: extractTagnameList(style.tags),
         };
     };
 
@@ -324,7 +324,7 @@ class StyleService{
 
         return { // tagname만 꺼내와서 배열로 추가 후 리턴
             ...style,
-            tags: style.tags.map(({ tagname }) => tagname),
+            tags: extractTagnameList(style.tags),
         };
     };
 }

@@ -4,9 +4,7 @@ import { convertCategoriesForRes } from '../utils/categoryUtil.js'
 class RankingService{
     getRankedStyleList = async (queryParams) => { // 예시 페이지를 보니 큐레이션이 1개 이상 있을때에만 랭킹에 올라가도록 되어있음
         const { page = 1, pageSize = 10, rankBy = 'total' } = queryParams;
-        // rankBy는 total | trendy | personality | practicality, costEffectiveness
-        const validRankBy = ['trendy', 'personality', 'practicality', 'costEffectiveness', 'total'];        
-
+        // rankBy는 total | trendy | personality | practicality, costEffectiveness     
         let rankedGroups;
 
         if (rankBy === 'total') { // rankBy가 total 이면 값을 불러와서 평균 구한 후 정렬
