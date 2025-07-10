@@ -20,7 +20,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadsDirPath = path.join(__dirname, 'uploads');
 const corsOptions = {
-  origin: 'https://how-do-i-look-fe-mdss.onrender.com', // 허용할 프론트엔드 도메인 지정
+  origin: 'https://naver.com', // 허용할 프론트엔드 도메인 지정
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // 허용할 HTTP 메서드
   allowedHeaders: ['Content-Type', 'multipart/form-data'], // 허용할 요청 헤더
   optionsSuccessStatus: 200
