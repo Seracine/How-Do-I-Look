@@ -19,8 +19,15 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadsDirPath = path.join(__dirname, 'uploads');
+const corsOptions = {
+  origin: 'https://how-do-i-look-be-nfht.onrender.com', // 허용할 프론트엔드 도메인 지정
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // 허용할 HTTP 메서드
+  allowedHeaders: 'Content-Type', // 허용할 요청 헤더
+  optionsSuccessStatus: 200
+};
 
-app.use(cors()); //CORS 설정
+
+app.use(cors(corsOptions)); //CORS 설정
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));// URL-encoded 본문 파싱 미들웨어 (폼 데이터 받을 때 필요)
@@ -36,19 +43,19 @@ app.use('/curations/:curationId/comments', commentRouter); // 답글 라우터 �
 app.use('/comments', commentRouter); // 답글 중첩
 
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    let statusCode = 500;
-    let message = "알수 없는 오류 발생";
+  console.error(err.stack);
+  let statusCode = 500;
+  let message = "알수 없는 오류 발생";
 
-    if (err instanceof AppError) {
-        statusCode = err.statusCode;
-        message = err.message
-    } else if (err.code === 'P2025') {
-        statusCode = 404;
-        message = "존재하지 않습니다";
-    }
+  if (err instanceof AppError) {
+    statusCode = err.statusCode;
+    message = err.message
+  } else if (err.code === 'P2025') {
+    statusCode = 404;
+    message = "존재하지 않습니다";
+  }
 
-    return res.status(statusCode).json({ message });
+  return res.status(statusCode).json({ message });
 });
 
 
