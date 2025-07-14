@@ -58,7 +58,7 @@
 ### 스타일 (Style)
 -   **`POST /styles`**
     -   설명: 새로운 스타일을 생성합니다. 삽입할 데이터가 형식에 맞지 않으면 에러가 발생합니다.
-    -   Request Body : `{ "nickname": "string", "title": "string", "content": "string", "password": "string", "categories": object, "tags": array, "imageUrls": array }`
+    -   Request Body: `{ "nickname": "string", "title": "string", "content": "string", "password": "string", "categories": object, "tags": array, "imageUrls": array }`
     -   제약 사항
         - `nickname` : 1~20 글자의 문자열
         - `title` : 1~30 글자의 문자열
@@ -84,12 +84,12 @@
  
 -   **`PUT /styles/:styleId`**
     -   설명: 스타일을 수정합니다. `password` 필드가 저장된 정보와 다르거나 수정 데이터가 형식에 맞지 않으면 에러가 발생합니다.
-    -   Request Body : `{ "nickname": "string", "title": "string", "content": "string", "password": "string", "categories": object, "tags": array, "imageUrls": array }`
+    -   Request Body: `{ "nickname": "string", "title": "string", "content": "string", "password": "string", "categories": object, "tags": array, "imageUrls": array }`
     -   응답: `200 OK`, 수정한 스타일 객체
  
 -   **`DELETE /styles`**
     -   설명: 스타일을 삭제합니다. `password` 필드가 저장된 정보와 다르면 에러가 발생합니다.
-    -   Request Body : `{ "password": "string" }`
+    -   Request Body: `{ "password": "string" }`
     -   응답: `200 OK`, `{ "message": "스타일 삭제 성공" }`
 
 -   **`GET /ranking`**
@@ -102,44 +102,48 @@
 
 ### 2. 큐레이션 (Curation)
 -   **`POST /styles/:styleId/curations`**
-    -   설명: 특정 스타일에 새로운 큐레이션을 생성합니다.
-    -   요청 본문: `{ "nickname": "string", "content": "string", "password": "string", "trendy": "int", "personality": "int", "practicality": "int", "costEffectiveness": "int" }`
-    -   응답: 생성된 큐레이션 객체
+    -   설명: 특정 스타일에 새로운 큐레이션을 생성합니다. 삽입할 데이터가 형식에 맞지 않으면 에러가 발생합니다.
+    -   Request Body: `{ "nickname": "string", "content": "string", "password": "string", "trendy": "int", "personality": "int", "practicality": "int", "costEffectiveness": "int" }`
+    -   제약 사항
+        - `nickname` : 1~20 글자의 문자열
+        - `content` : 1~500 글자의 문자열
+        - `password` : 영문과 숫자가 포함된 8~16 글자의 문자열
+        - 각 점수는 0 이상의 정수
+    -   응답: `201 CREATED`, 생성된 큐레이션 객체
 
 -   **`GET /styles/:styleId/curations`**
     -   설명: 특정 스타일의 모든 큐레이션 목록을 조회합니다. 페이지네이션 및 검색 가능.
-    -   쿼리 파라미터: `?page=1&pageSize=10&searchBy=title&keyword=겨울`
-    -   응답: `{ currentPage: 1, totalPages: 5, totalItemCount: 45, data: [ { id: 101, title: "겨울 코디", ... }, ... ] }`
+    -   파라미터
+        - `pageSize` : number (페이지당 아이템 수)
+        - `searchBy` : nickname | content (검색 기준)
+        - `keyword` : string (검색어)
+    -   응답: `200 OK`, 특정 스타일에 종속된 큐레이션 객체의 리스트
 
 -   **`PUT /curations/:curationId`**
-    -   설명: 특정 큐레이션의 정보를 업데이트합니다. (스타일 비밀번호 필요)
-    -   요청 본문: `{ "title": "봄 코디", "description": "산뜻한 봄 룩", "stylePassword": "secure_password" }`
-    -   응답: 업데이트된 큐레이션 객체
+    -   설명: 특정 큐레이션의 정보를 업데이트합니다. `password` 필드가 저장된 정보와 다르거나 수정 데이터가 형식에 맞지 않으면 에러가 발생합니다.
+    -   Request Body: `{ "nickname": "string", "content": "string", "password": "string", "trendy": "int", "personality": "int", "practicality": "int", "costEffectiveness": "int" }`
+    -   응답: `200 OK`, 수정한 큐레이션 객체
 
 -   **`DELETE /curations/:curationId`**
-    -   설명: 특정 큐레이션을 삭제합니다. (스타일 비밀번호 필요)
-    -   요청 본문: `{ "stylePassword": "secure_password" }`
-    -   응답: `{ message: "큐레이션이 성공적으로 삭제되었습니다." }`
+    -   설명: 특정 큐레이션을 삭제합니다. `password` 필드가 저장된 정보와 다르거나 수정 데이터가 형식에 맞지 않으면 에러가 발생합니다.
+    -   Request Body : `{ "password": "string" }`
+    -   응답: `200 OK`, `{ "message": "큐레이션 삭제 성공" }`
 
 ### 3. 답글 (Comment)
 -   **`POST /curations/:curationId/comments`**
-    -   설명: 특정 큐레이션에 새로운 댓글을 생성합니다. (스타일 비밀번호 필요)
-    -   요청 본문: `{ "content": "너무 예뻐요!", "stylePassword": "secure_password" }`
-    -   응답: 생성된 댓글 객체
-
--   **`GET /curations/:curationId/comments`**
-    -   설명: 특정 큐레이션의 모든 댓글 목록을 조회합니다.
-    -   응답: `[ { id: 201, content: "너무 예뻐요!", ... }, ... ]`
+    -   설명: 특정 큐레이션에 새로운 답글을 생성합니다. `password` 필드가 Style의 `password`와 일치하지 않으면 에러가 발생합니다.
+    -   Request Body: `{ "content": "string", "password": "string" }`
+    -   응답: `201 CREATED`, 생성된 답글 객체
 
 -   **`PUT /comments/:commentId`**
-    -   설명: 특정 댓글의 내용을 업데이트합니다. (스타일 비밀번호 필요)
-    -   요청 본문: `{ "content": "정말 좋아요!", "stylePassword": "secure_password" }`
-    -   응답: 업데이트된 댓글 객체
+    -   설명: 특정 답글의 내용을 업데이트합니다. `password` 필드가 Style의 `password`와 일치하지 않으면 에러가 발생합니다.
+    -   Request Body: `{ "content": "string", "password": "string" }`
+    -   응답: `200 OK`, 수정된 답글 객체
 
 -   **`DELETE /comments/:commentId`**
-    -   설명: 특정 댓글을 삭제합니다. (스타일 비밀번호 필요)
-    -   요청 본문: `{ "stylePassword": "secure_password" }`
-    -   응답: `{ message: "댓글이 성공적으로 삭제되었습니다." }`
+    -   설명: 특정 답글을 삭제합니다. `password` 필드가 Style의 `password`와 일치하지 않으면 에러가 발생합니다.
+    -   Request Body: `{ "password": "string" }`
+    -   응답: `{ message: "답글 삭제 성공" }`
  
 ### 4. 태그 (Tag)
 
