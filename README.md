@@ -101,7 +101,7 @@
         - `content` : 1~500 글자의 문자열
         - `password` : 영문과 숫자가 포함된 8~16 글자의 문자열
         - 각 점수는 0 이상의 정수
-    -   응답: `201 CREATED`, 생성된 큐레이션 객체
+    -   응답: `200 OK`, 생성된 큐레이션 객체
 
 -   **`GET /styles/:styleId/curations`**
     -   설명: 특정 스타일의 모든 큐레이션 목록을 조회합니다. 페이지네이션 및 검색 가능.
@@ -125,7 +125,7 @@
 -   **`POST /curations/:curationId/comments`**
     -   설명: 특정 큐레이션에 새로운 답글을 생성합니다. `password` 필드가 Style의 `password`와 일치하지 않으면 에러가 발생합니다.
     -   Request Body: `{ "content": "string", "password": "string" }`
-    -   응답: `201 CREATED`, 생성된 답글 객체
+    -   응답: `200 OK`, 생성된 답글 객체
 
 -   **`PUT /comments/:commentId`**
     -   설명: 특정 답글의 내용을 업데이트합니다. `password` 필드가 Style의 `password`와 일치하지 않으면 에러가 발생합니다.
