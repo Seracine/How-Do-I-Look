@@ -58,13 +58,6 @@
 -   **`POST /styles`**
     -   설명: 새로운 스타일을 생성합니다. 삽입할 데이터가 형식에 맞지 않으면 에러가 발생합니다.
     -   Request Body: `{ "nickname": "string", "title": "string", "content": "string", "password": "string", "categories": object, "tags": array, "imageUrls": array }`
-    -   제약 사항
-        - `nickname` : 1~20 글자의 문자열
-        - `title` : 1~30 글자의 문자열
-        - `content` : 1~500 글자의 문자열
-        - `password` : 영문과 숫자가 포함된 8~16 글자의 문자열
-        - `tag` : 태그는 **최대 3개**까지만 등록 가능
-        - `imageUrls` : **5MB 이하**의 이미지, `jpg | jpeg | png | gif | bmp | webp | svg` 형식만 허용
     -   응답: `201 CREATED`, 생성된 스타일 객체 
 
 -   **`GET /styles`**
@@ -153,6 +146,8 @@
 -   **`POST /images`**
     -   설명: 이미지파일을 URL형태로 저장합니다.
     -   Request Body: `{ "image": File }`
+    -   제약 사항
+        - `image` : **5MB 이하**의 이미지, `jpg | jpeg | png | gif | bmp | webp | svg` 형식만 허용
     -   응답: `200 OK`, 태그들이 담긴 배열
 
  
