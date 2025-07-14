@@ -57,8 +57,15 @@
 
 ### 스타일 (Style)
 -   **`POST /styles`**
-    -   설명: 새로운 스타일을 생성합니다.
+    -   설명: 새로운 스타일을 생성합니다. 삽입할 데이터가 형식에 맞지 않으면 에러가 발생합니다.
     -   Request Body : `{ "nickname": "string", "title": "string", "content": "string", "password": "string", "categories": object, "tags": array, "imageUrls": array }`
+    -   제약 사항
+        - `nickname` : 1~20 글자의 문자열
+        - `title` : 1~30 글자의 문자열
+        - `content` : 1~500 글자의 문자열
+        - `password` : 영문과 숫자가 포함된 8~16 글자의 문자열
+        - `tag` : 태그는 3개까지만 등록 가능
+        - `imageUrls` : 5MB 이하의 이미지, jpg | jpeg | png | gif | bmp | webp | svg 형식만 허용
     -   응답: `201 CREATED`, 생성된 스타일 객체 
 
 -   **`GET /styles`**
@@ -76,12 +83,12 @@
     -   응답: `200 OK`, 조회한 스타일 객체
  
 -   **`PUT /styles/:styleId`**
-    -   설명: 스타일을 수정합니다.
+    -   설명: 스타일을 수정합니다. `password` 필드가 저장된 정보와 다르거나 수정 데이터가 형식에 맞지 않으면 에러가 발생합니다.
     -   Request Body : `{ "nickname": "string", "title": "string", "content": "string", "password": "string", "categories": object, "tags": array, "imageUrls": array }`
     -   응답: `200 OK`, 수정한 스타일 객체
  
 -   **`DELETE /styles`**
-    -   설명: 스타일을 삭제합니다.
+    -   설명: 스타일을 삭제합니다. `password` 필드가 저장된 정보와 다르면 에러가 발생합니다.
     -   Request Body : `{ "password": "string" }`
     -   응답: `200 OK`, `{ "message": "스타일 삭제 성공" }`
 
@@ -96,7 +103,7 @@
 ### 2. 큐레이션 (Curation)
 -   **`POST /styles/:styleId/curations`**
     -   설명: 특정 스타일에 새로운 큐레이션을 생성합니다.
-    -   요청 본문: `{ "title": "겨울 코디", "description": "따뜻한 겨울 룩", "stylePassword": "secure_password" }`
+    -   요청 본문: `{ "nickname": "string", "content": "string", "password": "string", "trendy": "int", "personality": "int", "practicality": "int", "costEffectiveness": "int" }`
     -   응답: 생성된 큐레이션 객체
 
 -   **`GET /styles/:styleId/curations`**
