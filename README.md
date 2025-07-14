@@ -1,6 +1,8 @@
 # 🎉 How Do I Look
 
 사용자들이 자신의 스타일을 공유하고, 그에 대한 큐레이션과 답글을 주고받으며 스타일에 대한 의견을 나눌 수 있는 기능을 제공합니다.
+<img width="1200" height="700" alt="image" src="https://github.com/user-attachments/assets/c92889ce-126b-49fd-a27b-4e118b84b2d0" />
+
 
 ## 📁 프로젝트 구조
 ```
@@ -56,92 +58,40 @@
 ### 스타일 (Style)
 -   **`POST /styles`**
     -   설명: 새로운 스타일을 생성합니다.
-    -   Request Body
-         ```
-         {
-          	"nickname": "string",
-          	"title": "string",
-          	"content": "string",
-          	"password": "string",
-          	"categories": {
-          		"top": {
-          			"name": "string",
-          			"brand": "string",
-          			"price": 0
-          		},
-          		"bottom": {
-          			"name": "string",
-          			"brand": "string",
-          			"price": 1
-          		},
-          		"outer": {...},
-          		"dress": {...},
-          		"shoes": {...},
-          		"bag": {...},
-          		"accessory": {...}
-          	},
-          	"tags": [
-          		"string",
-          		"string"
-          	],
-          	"imageUrls": [
-          		"string",
-          		"string"
-             ]
-          }
-         ```
-    -   응답: `201 CREATED` 생성된 스타일 객체 
-        ```
-        {
-        	"id": 1,
-        	"nickname": "string",
-        	"title": "string",
-        	"content": "string",
-        	"viewCount": 0,
-        	"curationCount": 0,
-        	"createdAt": "2024-02-22T07:47:49.803Z",
-        	"categories": {
-        		"top": {
-        			"name": "string",
-        			"brand": "string",
-        			"price": 0
-        		},
-        		"bottom": {
-        			"name": "string",
-        			"brand": "string",
-        			"price": 1
-        		},
-        	},
-        	"tags": [
-        		"string",
-        		"string"
-        	],
-        	"imageUrls": [
-        		"string",
-        		"string"
-    	      ]
-        }
-        ```
+    -   Request Body : `{ "nickname": "string", "title": "string", "content": "string", "password": "string", "categories": object, "tags": array, "imageUrls": array }`
+    -   응답: `201 CREATED`, 생성된 스타일 객체 
 
 -   **`GET /styles`**
     -   설명: 모든 스타일 목록을 조회합니다.
-    -   응답: `[ { id: 1, name: "내 스타일" }, ... ]`
+    -   파라미터
+        - `pageSize` : number (페이지당 아이템 수)
+        - `sortBy` : latest | mostViewed | mostCurated (정렬 기준)
+        - `searchBy` : nickname | title | content | tag (검색 기준)
+        - `keyword` : string (검색어)
+        - `tag` : string (태그)
+    -   응답: `200 OK`, 모든 스타일 객체의 리스트
 
 -   **`GET /styles/:styleId`**
     -   설명: 특정 스타일을 조회합니다.
-    -   응답: ` { id: 1, name: "내 스타일", ... }`
+    -   응답: `200 OK`, 조회한 스타일 객체
  
 -   **`PUT /styles/:styleId`**
     -   설명: 스타일을 수정합니다.
-    -   응답: ` { id: 1, name: "내 스타일", ... }`
+    -   Request Body : `{ "nickname": "string", "title": "string", "content": "string", "password": "string", "categories": object, "tags": array, "imageUrls": array }`
+    -   응답: `200 OK`, 수정한 스타일 객체
  
 -   **`DELETE /styles`**
     -   설명: 스타일을 삭제합니다.
-    -   응답: `[ { id: 1, name: "내 스타일" }, ... ]`
+    -   Request Body : `{ "password": "string" }`
+    -   응답: `200 OK`, `{ "message": "스타일 삭제 성공" }`
 
 -   **`GET /ranking`**
     -   설명: 스타일 랭킹 목록을 조회합니다.
-    -   응답: ` { id: 1, name: "내 스타일", ... }`
+    -   파라미터
+        - `page` : number (현재 페이지 번호)
+        - `pageSize` : number (페이지당 아이템 수)
+        - `rankBy` : total | trendy | personality | practicality, costEffectiveness (랭킹 기준)
+    -   응답: `200 OK`, 점수와 랭킹이 포함된 스타일 객체 리스트
 
 ### 2. 큐레이션 (Curation)
 -   **`POST /styles/:styleId/curations`**
