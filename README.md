@@ -89,7 +89,7 @@
     -   파라미터
         - `page` : number (현재 페이지 번호)
         - `pageSize` : number (페이지당 아이템 수)
-        - `rankBy` : total | trendy | personality | practicality, costEffectiveness (랭킹 기준)
+        - `rankBy` : total | trendy | personality | practicality | costEffectiveness (랭킹 기준)
     -   응답: `200 OK`, 점수와 랭킹이 포함된 스타일 객체 리스트
 
 ### 2. 큐레이션 (Curation)
@@ -148,7 +148,7 @@
     -   Request Body: `{ "image": File }`
     -   제약 사항
         - `image` : **5MB 이하**의 이미지, `jpg | jpeg | png | gif | bmp | webp | svg` 형식만 허용
-    -   응답: `200 OK`, 태그들이 담긴 배열
+    -   응답: `200 OK`, 저장된 이미지 주소가 담긴 객체
 
  
 ## 🚨 에러 처리
