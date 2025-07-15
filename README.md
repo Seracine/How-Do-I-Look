@@ -164,8 +164,15 @@ API는 에러 발생 시 미리 지정해놓은 커스텀 에러 객체를 thorw
 -   **500 Internal Server Error:** 서버 내부 오류 또는 prisma 오류.
     -   예시: `{ "message": "알 수 없는 에러 발생." }`
 
-
-
+## 👥 팀
+- 김준철 ([Github](https://github.com/nodejun))
+    - 담당 역할: 업로드 미들웨어, 유효성검사 미들웨어 개발/프로젝트 계획서작성,최종발표 및 발표자료 제작, Render 배포 및 프론트와 백엔드 연결
+- 유소망 ([Github](https://github.com/K-somang))
+    - 담당 역할: 답글 관련 API개발(등록, 수정, 삭제) 중간발표 및 발표자료 제작
+- 천수 ([Github](https://github.com/Seracine))
+    - 담당 역할: 스타일 관련 API 개발 (등록, 수정, 삭제, 상세조회, 목록조회, 랭킹조회, 인기태그조회), bcrypt를 사용한 비밀번호 암호화, 시스템 아키텍쳐 설계, 프로젝트 세팅, 시연 영상 제작
+- 한선재 ([Github](https://github.com/HSunJ))
+    - 담당 역할: 큐레이팅 관련 API 개발 (등록, 수정, 삭제, 목록조회), ERD설계와 Prisma를 사용한 DB 디자인, 테스트를 위한 Mock데이터 및 시딩함수 제작, 전역 에러핸들러 개발, README.md 작성
 
 
 
