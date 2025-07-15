@@ -44,7 +44,6 @@
 - **전역 에러 핸들링:** 일관된 에러 응답 처리. 개별 Request Handler에서 에러가 발생하는 경우, Global Error Handler에서 처리하도록 구현
 
 ## 🛠️ 기술 스택
-
 -   **Backend:** Node.js, Express.js
 -   **Database:** PostgreSQL
 -   **ORM:** Prisma
@@ -54,7 +53,7 @@
 
 ## 🚀 API 엔드포인트
 
-### 스타일 (Style)
+### 1. 스타일 (Style)
 -   **`POST /styles`**
     -   설명: 새로운 스타일을 생성합니다. 삽입할 데이터가 형식에 맞지 않으면 에러가 발생합니다.
     -   Request Body: `{ "nickname": "string", "title": "string", "content": "string", "password": "string", "categories": object, "tags": array, "imageUrls": array }`
@@ -174,7 +173,7 @@ API는 에러 발생 시 미리 지정해놓은 커스텀 에러 객체를 thorw
 - 한선재 ([Github](https://github.com/HSunJ))
     - 담당 역할: 큐레이팅 관련 API 개발 (등록, 수정, 삭제, 목록조회), ERD설계와 Prisma를 사용한 DB 디자인, 테스트를 위한 Mock데이터 및 시딩함수 제작, 전역 에러핸들러 개발, README.md 작성
 
-
+### [📝프로젝트 계획서](https://wakeful-iridium-814.notion.site/Node-js-3-2201fac1ddd38004947cdca25137c2b4)
 
 
 
